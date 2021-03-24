@@ -1,0 +1,15 @@
+<<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    {% block content %}
+      {% for username, password in users.items() %}
+        <li>{{username}}:{{password}}</li>
+      {% endfor %}
+    {% endblock %}
+
+  </body>
+</html>
