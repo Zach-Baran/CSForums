@@ -53,7 +53,7 @@ class Post(db.Model):
 class Events(db.Model):
     __tablename__ = 'events'
     id = db.Column(db.Integer, primary_key=True)
-    event_name = db.Column(db.String, nullable=False,)
+    event_name = db.Column(db.String(64), nullable=False,)
     event_date = db.Column(db.Integer, nullable=False)
     description = db.Column(db.String(64), unique=False, nullable=False)
     event_content = db.Column(db.String(128), unique=False)

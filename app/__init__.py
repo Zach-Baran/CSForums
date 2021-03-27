@@ -1,17 +1,24 @@
-import pyodbc
-import os
-import urllib.parse
 from flask import Flask
-from flask import Flask
+
+import mysql.connector
+from mysql.connector import errorcode
 from flask_sqlalchemy import SQLAlchemy
 
-params = urllib.parse.quote_plus("DRIVER={ODBC Driver 17 for SQL Server};SERVER=tcp:compsciserver.database.windows.net,1433;DATABASE=CompSciHub;UID=fantasticfour;PWD=CSC330sp1")
+from dotenv import load_dotenv
+import os
+
+load_dotenv('.flaskenv')
+
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'fantasticfour'
-app.config['SQLALCHEMY_DATABASE_URI'] = "mssql+pyodbc:///?odbc_connect=%s" %  params
-app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
+app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://fantasticfour@compscihubserver:CSC330sp1@compscihubserver.mysql.database.azure.com/compscihub"
+
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]= True
+
+
+
+
 
 db = SQLAlchemy(app)
 
