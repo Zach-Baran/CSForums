@@ -1,6 +1,6 @@
 from app import db
-
-class User(db.Model):
+from flask_login import UserMixin
+class User(db.Model, UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(64), unique=True, nullable=False)
@@ -9,7 +9,8 @@ class User(db.Model):
     last_name = db.Column(db.String(64), unique=False)
     role = db.Column(db.String(64), unique=False, nullable=False)
     code = db.Column(db.Integer, unique=False)
-
+    def get(self):
+        return 
     def __repr__(self):
         return self.email + ': ' + self.role + ':' + self.first_name + ':' + self.last_name
 
@@ -48,7 +49,7 @@ class Post(db.Model):
 
     def __repr__(self):
         return str(self.post.id) + ': ' + str(self.forum_id) + ': ' + str(self.user_id) + ': ' + str(self.date) + ': ' + self.content
-        
+
 
 class Events(db.Model):
     __tablename__ = 'events'
@@ -75,6 +76,3 @@ class Admin(db.Model):
 
     def __repr__(self):
         return str(self.admin.id) + ': ' + self.email + ': ' + self.first_name + ': ' + self.last_name + ': ' + self.role
-        
-
-    

@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
@@ -6,8 +6,8 @@
   </head>
   <body>
     {% block content %}
-      {% for username, password in users.items() %}
-        <li>{{username}}:{{password}}</li>
+      {% for user in users %}
+        <li>{{user.first_name}}</li>
       {% endfor %}
     {% endblock %}
 
