@@ -10,8 +10,7 @@ import sys
 @app.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
-    temp= current_user
-    return render_template('homepage.html', user=temp)
+    return render_template('homepage.html', user=current_user)
 
 
 @app.route('/register', methods=['GET','POST'])
