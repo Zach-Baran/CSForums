@@ -3,15 +3,20 @@
   <head>
     <meta charset="utf-8">
     <title></title>
+
   </head>
   <body>
 
     {% if current_user.is_authenticated %}
       <a href="/forums">View Forums</a>
-
+      <a href="/profile/{{current_user.first_name}}">{{current_user.first_name}}</a>
     {% endif %}
 
 
     {% block content %} {% endblock %}
   </body>
+
+
+
+  {% block script %} {% endblock %}
 </html>

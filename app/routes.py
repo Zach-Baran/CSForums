@@ -10,7 +10,7 @@ import sys
 @app.route('/', methods=['GET', 'POST'])
 def home():
     if current_user.is_authenticated:
-        return render_template('homepage.html')
+        return render_template('homepage.html', users = db.session.query(User).all())
     else:
         return redirect(url_for('login'))
 
@@ -51,7 +51,7 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-#Function handles creating topics and viewing the forums
+#Function handles creating and deleting topics, and viewing the forums
 @app.route('/forums/createtopic', endpoint='createtopic', methods=['GET', 'POST'])
 @app.route('/forums', endpoint='forums', methods=['GET', 'POST'])
 def forums():
@@ -71,18 +71,32 @@ def forums():
             else:
                 return redirect(url_for('forums'))
         elif request.endpoint=='forums': #If requested url is forums
-            return render_template('forums.html')
+            if request.method == 'POST': #if admin clicked delete topic button
+                if request.form['action'] == 'del_topic':
+                    db.engine.execute('DELETE FROM forums where id = {};'.format(request.form.get("del_topic")))
+                    return redirect(url_for('forums'))
+            if request.method == 'GET':
+                topics = db.engine.execute('SELECT * from forums;')
+                return render_template('forums.html', topics=topics)
     else:
         return redirect(url_for('login'))
 
 #Dynamic user route, displays a profile given a unique first name
 @app.route('/profile/<user>', methods=['GET', 'POST'])
 def profile(user):
-    if current_user.is_authenticated:
-        valid = db.session.query(User).filter_by(first_name=user).first()
-        if valid != None:
-            return render_template('profile.html', user=user)
+    if request.method == 'POST': #if admin clicked ban or delete button
+        if request.form['action'] == 'banuser':
+            db.engine.execute('UPDATE users SET role = "banned" WHERE id = {};'.format(request.form.get("ban_button")))
+            return '{}'.format(request.form.get("ban_button"))
+        elif request.form['action'] == 'deleteuser':
+            db.engine.execute('DELETE FROM users WHERE id = {};'.format(request.form.get("delete_button")))
+            return 'Account Deleted'
+    if request.method == 'GET': #if user is viewing profile
+        if current_user.is_authenticated:
+            valid = db.session.query(User).filter_by(first_name=user).first()
+            if valid != None:
+                return render_template('profile.html', user=valid)
+            else:
+                return redirect(url_for('home'))
         else:
-            return redirect(url_for('home'))
-    else:
-        return redirect(url_for('login'))
+            return redirect(url_for('login'))
