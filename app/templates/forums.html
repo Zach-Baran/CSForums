@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  {% if current_user.role=='admin' %}
+    <a href="/forums/createtopic">Post Forum Topic</a>
+  {% endif %}
+
+
+
+{% endblock %}

@@ -1,16 +1,18 @@
 from app import app, db
-from app.models import User
-from flask import Flask, render_template, redirect, url_for, flash
+from app.models import User, Forums
+from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
-from app.forms import CreateUser, LoginUser
+from app.forms import CreateUser, LoginUser, createTopic
 from werkzeug.security import generate_password_hash, check_password_hash
 import sys
 
 
 @app.route('/', methods=['GET', 'POST'])
-@login_required
 def home():
-    return render_template('homepage.html', user=current_user)
+    if current_user.is_authenticated:
+        return render_template('homepage.html')
+    else:
+        return redirect(url_for('login'))
 
 
 @app.route('/register', methods=['GET','POST'])
@@ -48,3 +50,39 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('login'))
+
+#Function handles creating topics and viewing the forums
+@app.route('/forums/createtopic', endpoint='createtopic', methods=['GET', 'POST'])
+@app.route('/forums', endpoint='forums', methods=['GET', 'POST'])
+def forums():
+    if current_user.is_authenticated:
+        if request.endpoint=='createtopic': #If requested url is createtopic
+            if current_user.role=='admin':
+                form=createTopic()
+                if form.validate_on_submit():
+                    topic = Forums(user_id="0", admin_id=current_user.id, date="0", \
+                    topic_name=form.title.data, topic_description=form.description.data, role=" ")
+                    db.session.add(topic)
+                    db.session.commit()
+                    form.title.data=''
+                    form.description.data=''
+                    return redirect(url_for('home'))
+                return render_template('createtopic.html', form=form)
+            else:
+                return redirect(url_for('forums'))
+        elif request.endpoint=='forums': #If requested url is forums
+            return render_template('forums.html')
+    else:
+        return redirect(url_for('login'))
+
+#Dynamic user route, displays a profile given a unique first name
+@app.route('/profile/<user>', methods=['GET', 'POST'])
+def profile(user):
+    if current_user.is_authenticated:
+        valid = db.session.query(User).filter_by(first_name=user).first()
+        if valid != None:
+            return render_template('profile.html', user=user)
+        else:
+            return redirect(url_for('home'))
+    else:
+        return redirect(url_for('login'))
