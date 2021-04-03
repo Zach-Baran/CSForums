@@ -8,7 +8,7 @@ class User(db.Model, UserMixin):
     first_name = db.Column(db.String(64), unique=False)
     last_name = db.Column(db.String(64), unique=False)
     role = db.Column(db.String(64), unique=False, nullable=False)
-    code = db.Column(db.Integer, unique=False)
+
     def get(self):
         return 
     def __repr__(self):
@@ -72,7 +72,15 @@ class Admin(db.Model):
     first_name = db.Column(db.String(64), nullable=False)
     last_name = db.Column(db.String(64), nullable=False)
     role = db.Column(db.String(64), nullable=False)
-    generate_id = db.Column(db.Integer, nullable=False, unique=True)
+
 
     def __repr__(self):
         return str(self.admin.id) + ': ' + self.email + ': ' + self.first_name + ': ' + self.last_name + ': ' + self.role
+
+class GCode(db.Model):
+    __tablename__ = 'code'
+    a_id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.Integer, nullable=False, unique=True)
+
+    def __repr__(self):
+        return str(self.a.id) + ': ' + str(self.code)
