@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+
+
+
+{% block content %}
+
+
+  <h1> {{user.first_name}}</h1>
+  {% if (current_user.role=='admin') %}
+
+    <form action="" method="post" novalidate>
+      <button type="submit" name="ban_button" value={{user.id}}>Ban</button>
+      <input type="hidden" name="action" value="banuser">
+    </form>
+    <form action="" method="post" novalidate>
+      <button type="submit" name="delete_button" value={{user.id}}>Delete Account</button>
+      <input type="hidden" name="action" value="deleteuser">
+    </form>
+  {% endif %}
+
+{% endblock %}

@@ -11,6 +11,7 @@ class User(db.Model, UserMixin):
     code = db.Column(db.Integer, unique=False)
     forums = db.relationship('Forums', backref='users', lazy='dynamic')
     #events = db.relationship('Events', backref='users', lazy='dynamic')
+
     def get(self):
         return 
     def __repr__(self):
@@ -64,3 +65,12 @@ class Events(db.Model):
 
     def __repr__(self):
         return str(self.events.id) + ': ' + str(self.event_date) + ': ' + self.description + ': ' + self.content + ': ' + self.role
+
+
+class GCode(db.Model):
+    __tablename__ = 'code'
+    a_id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.Integer, nullable=False, unique=True)
+
+    def __repr__(self):
+        return str(self.a.id) + ': ' + str(self.code)

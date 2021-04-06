@@ -1,12 +1,15 @@
-<!DOCTYPE html>
-  <head></head>
-  <body>
-    <h1>homepage</h1>
+{% extends "base.html" %}
+
+
+
 
     {% block content %}
-      <h1>{{user}}</h1>
 
+      {% if (current_user.role=='admin') %}
+        
+
+
+      {% else %}
+
+      {% endif %}
     {% endblock %}
-  </body>
-
-</html>

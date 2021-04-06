@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  {% if current_user.role=='admin' %}
+    <a href="/forums/createtopic">Post Forum Topic</a>
+  {% endif %}
+
+
+  {% for title in topics %}
+    <div>{{title.topic_name}}</div>
+    <form action="" method="post" novalidate>
+      <button type="submit" name="del_topic" value={{title.id}}>Delete</button>
+      <input type="hidden" name="action" value="del_topic">
+    </form>
+  {% endfor %}
+
+
+{% endblock %}

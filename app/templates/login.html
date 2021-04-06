@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <title>Log In page</title>
-    <link href="static/bootstrap.min.css" rel="stylesheet" media="screen">
-  </head>
-  <body>
-    {% block content %}
+{% extends "base.html" %}
+
+  {% block content %}
       <form action="" method="post" novalidate>
         {{form.hidden_tag()}}
         <p>
@@ -20,5 +15,3 @@
         <p>{{form.submit()}}</p>
       </form>
     {% endblock %}
-  </body>
-</html>
