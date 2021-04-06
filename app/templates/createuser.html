@@ -1,10 +1,4 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title></title>
-  </head>
-  <body>
+{% extends "base.html" %}
     {% block content %}
       <form action="" method="post" novalidate>
         {{form.hidden_tag()}}
@@ -28,5 +22,3 @@
         <p>{{form.submit()}}</p>
       </form>
     {% endblock %}
-  </body>
-</html>

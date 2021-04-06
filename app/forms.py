@@ -15,3 +15,9 @@ class CreateUser(FlaskForm):
     email=StringField('Email:', validators=[DataRequired()])
     password=PasswordField('Password:', validators=[DataRequired()])
     submit=SubmitField('Login')
+
+
+class createTopic(FlaskForm):
+    title=StringField('Title:', validators=[DataRequired()])
+    description=StringField('Description:', validators=[DataRequired()])
+    submit=SubmitField('Create Topic')
