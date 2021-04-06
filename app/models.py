@@ -8,6 +8,9 @@ class User(db.Model, UserMixin):
     first_name = db.Column(db.String(64), unique=False)
     last_name = db.Column(db.String(64), unique=False)
     role = db.Column(db.String(64), unique=False, nullable=False)
+    code = db.Column(db.Integer, unique=False)
+    forums = db.relationship('Forums', backref='users', lazy='dynamic')
+    #events = db.relationship('Events', backref='users', lazy='dynamic')
 
     def get(self):
         return 
@@ -17,12 +20,12 @@ class User(db.Model, UserMixin):
 class Forums(db.Model):
     __tablename__ = 'forums'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, nullable=False)
-    admin_id = db.Column(db.Integer, nullable=False)
     date = db.Column(db.Integer, nullable=False)
     topic_name = db.Column(db.String(64), unique=False)
     topic_description = db.Column(db.String(64), unique=False)
     role = db.Column(db.String(64), unique=False)
+    posts = db.relationship('Post', backref='forums', lazy='dynamic')
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     def __repr__(self):
         return str(self.users.id) + ': ' + str(self.date) + ': ' + self.topic_name + ': ' + self.topic_description + ': '+  self.role
@@ -42,10 +45,10 @@ class Add_member(db.Model):
 class Post(db.Model):
     __tablename__ = 'post'
     id = db.Column(db.Integer, primary_key=True)
-    forum_id = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, nullable=False)
     date = db.Column(db.Integer, nullable=False)
     post_content = db.Column(db.String(128), unique=False)
+    forum_id = db.Column(db.Integer, db.ForeignKey('forums.id'))
 
     def __repr__(self):
         return str(self.post.id) + ': ' + str(self.forum_id) + ': ' + str(self.user_id) + ': ' + str(self.date) + ': ' + self.content
@@ -58,24 +61,11 @@ class Events(db.Model):
     event_date = db.Column(db.Integer, nullable=False)
     description = db.Column(db.String(64), unique=False, nullable=False)
     event_content = db.Column(db.String(128), unique=False)
-    role = db.Column(db.String(64), nullable=False)
+    #user_role = db.Column(db.String(64), db.ForeignKey('users.role'))
 
     def __repr__(self):
         return str(self.events.id) + ': ' + str(self.event_date) + ': ' + self.description + ': ' + self.content + ': ' + self.role
 
-
-class Admin(db.Model):
-    __tablename__ = 'admin'
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(64), nullable=False, unique=True)
-    password_hash = db.Column(db.String(256), unique=True )
-    first_name = db.Column(db.String(64), nullable=False)
-    last_name = db.Column(db.String(64), nullable=False)
-    role = db.Column(db.String(64), nullable=False)
-
-
-    def __repr__(self):
-        return str(self.admin.id) + ': ' + self.email + ': ' + self.first_name + ': ' + self.last_name + ': ' + self.role
 
 class GCode(db.Model):
     __tablename__ = 'code'
