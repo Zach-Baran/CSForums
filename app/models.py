@@ -65,7 +65,7 @@ class Events(db.Model):
     event_content = db.Column(db.String(128), unique=False)
 
     def __repr__(self):
-        return self.event_name) + ': ' + str(self.event_date) + ': ' + self.description
+        return self.event_name + ': ' + str(self.event_date) + ': ' + self.description
 
 
 class Career(db.Model):
