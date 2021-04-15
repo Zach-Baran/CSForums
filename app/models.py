@@ -11,7 +11,7 @@ class User(db.Model, UserMixin):
     code = db.Column(db.Integer, unique=False)
     forums = db.relationship('Forums', backref='users', lazy='dynamic')
     post = db.relationship('Post', backref='users', lazy='dynamic')
-    #
+
 
     def get(self):
         return 
