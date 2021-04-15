@@ -21,3 +21,9 @@ class createTopic(FlaskForm):
     title=StringField('Title:', validators=[DataRequired()])
     description=StringField('Description:', validators=[DataRequired()])
     submit=SubmitField('Create Topic')
+
+class createEvent(FlaskForm):
+    event_name=StringField('Event Name:', validators=[DataRequired()])
+    description=StringField('Description:', validators=[DataRequired()])
+    event_date=StringField('Event Date:', validators=[DataRequired()])
+    submit=SubmitField('Create Event')
