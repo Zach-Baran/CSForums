@@ -1,8 +1,8 @@
 from app import app, db
-from app.models import User, Forums
+from app.models import User, Forums, Events
 from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
-from app.forms import CreateUser, LoginUser, createTopic
+from app.forms import CreateUser, LoginUser, createTopic, createEvent
 from werkzeug.security import generate_password_hash, check_password_hash
 import sys
 
@@ -100,3 +100,29 @@ def profile(user):
                 return redirect(url_for('home'))
         else:
             return redirect(url_for('login'))
+
+#Function handles viewing creating events
+@app.route('/createevents/', methods=['GET', 'POST'])
+def createevents():
+    if current_user.is_authenticated:
+        if current_user.role=='admin':
+            form=createEvent()
+            if form.validate_on_submit():
+                event = Events(event_name = form.event_name.data,event_date = form.event_date.data, description = form.description.data)
+                db.session.add(event)
+                db.session.commit()
+                form.event_name.data=''
+                form.event_date.data=''
+                form.description.data=''
+                return redirect(url_for('home'))
+            return render_template('create_event.html', form=form)
+        else:
+            return redirect(url_for('view_events.html'))
+
+#Function handles viewing events
+@app.route('/view_events')
+def events():
+    all = db.session.query(Events).all()
+    print(all, file=sys.stderr)
+    return render_template('view_events.html', events=all)
+

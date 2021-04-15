@@ -60,13 +60,12 @@ class Events(db.Model):
     __tablename__ = 'events'
     id = db.Column(db.Integer, primary_key=True)
     event_name = db.Column(db.String(64), nullable=False,)
-    event_date = db.Column(db.Integer, nullable=False)
-    description = db.Column(db.String(64), unique=False, nullable=False)
+    event_date = db.Column(db.String(64), nullable=False)
+    description = db.Column(db.String(64), unique=False, nullable=True)
     event_content = db.Column(db.String(128), unique=False)
-    user_role = db.Column(db.String(64), db.ForeignKey('users.role'))
 
     def __repr__(self):
-        return str(self.events.id) + ': ' + str(self.event_date) + ': ' + self.description + ': ' + self.content
+        return self.event_name) + ': ' + str(self.event_date) + ': ' + self.description
 
 
 class Career(db.Model):
