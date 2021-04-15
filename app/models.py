@@ -10,7 +10,9 @@ class User(db.Model, UserMixin):
     role = db.Column(db.String(64), unique=False, nullable=False)
     code = db.Column(db.Integer, unique=False)
     forums = db.relationship('Forums', backref='users', lazy='dynamic')
-    #events = db.relationship('Events', backref='users', lazy='dynamic')
+    events = db.relationship('Events', backref='users', lazy='dynamic')
+    post = db.relationship('Post', backref='users', lazy='dynamic')
+
 
     def get(self):
         return 
@@ -45,7 +47,7 @@ class Add_member(db.Model):
 class Post(db.Model):
     __tablename__ = 'post'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer,db.ForeignKey('users.id'), nullable=False)
     date = db.Column(db.Integer, nullable=False)
     post_content = db.Column(db.String(128), unique=False)
     forum_id = db.Column(db.Integer, db.ForeignKey('forums.id'))
@@ -63,7 +65,18 @@ class Events(db.Model):
     event_content = db.Column(db.String(128), unique=False)
 
     def __repr__(self):
-        return self.event_date + ': ' + self.description + ': ' + self.event_name
+        return self.event_name) + ': ' + str(self.event_date) + ': ' + self.description
+
+
+class Career(db.Model):
+    __tablename__ = 'job'
+    id = db.Column(db.Integer, primary_key=True)
+    job_name = db.Column(db.String(64), nullable=False,)
+    job_date = db.Column(db.Integer, nullable=False)
+    description = db.Column(db.String(64), unique=False, nullable=False)
+
+    def __repr__(self):
+        return str(self.job.id) + ': ' + str(self.job_date) + ': ' + self.description + ': ' + self.content
 
 
 class GCode(db.Model):
