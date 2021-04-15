@@ -10,7 +10,6 @@ class User(db.Model, UserMixin):
     role = db.Column(db.String(64), unique=False, nullable=False)
     code = db.Column(db.Integer, unique=False)
     forums = db.relationship('Forums', backref='users', lazy='dynamic')
-    events = db.relationship('Events', backref='users', lazy='dynamic')
     post = db.relationship('Post', backref='users', lazy='dynamic')
 
 
