@@ -10,6 +10,9 @@
     {% if current_user.is_authenticated %}
       <a href="/forums">View Forums</a>
       <a href="/profile/{{current_user.first_name}}">{{current_user.first_name}}</a>
+      <a href="/createevents">Create Events</a>
+      <a href="/view_events">Upcoming Events</a>
+      <a href="/logout">Logout</a>
     {% endif %}
 
 
