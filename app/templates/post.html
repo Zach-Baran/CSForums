@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+  {% for post in posts %}
+  <div>{{post.username}}
+  <div>{{post.date}}</div>
+  <div>{{post.post_content}}</div>
+
+  {% endfor %}
+
+  <form action="" method="post" novalidate>
+    {{form.hidden_tag()}}
+    <p>
+      {{form.content.label}}<br>
+      {{form.content(size=52)}}
+    </p>
+    <p>{{form.submit()}}</p>
+  </form>
+{% endblock %}
