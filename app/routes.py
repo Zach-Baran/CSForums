@@ -1,9 +1,10 @@
 from app import app, db
-from app.models import User, Forums, Events
+from app.models import User, Forums, Events, Post
 from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
-from app.forms import CreateUser, LoginUser, createTopic, createEvent
+from app.forms import CreateUser, LoginUser, createTopic, createEvent, createPost
 from werkzeug.security import generate_password_hash, check_password_hash
+import datetime
 import sys
 
 
@@ -19,15 +20,18 @@ def home():
 def register():
     form=CreateUser()
     if form.validate_on_submit():
-        submit = User(email=form.email.data, first_name=form.firstname.data, last_name=form.lastname.data,  \
-            password_hash=generate_password_hash(form.password.data), role="Member", code=0)
-        db.session.add(submit)
-        db.session.commit()
-        form.firstname.data=''
-        form.lastname.data=''
-        form.email.data=''
-        form.password.data=''
-        return redirect(url_for('home'))
+        checkUsers = db.session.query(User).filter_by(username=form.username.data).first()
+        if checkUsers == None:
+            submit = User(username=form.username.data, email=form.email.data, first_name=form.firstname.data, last_name=form.lastname.data,  \
+                password_hash=generate_password_hash(form.password.data), role="Member", code=0)
+            db.session.add(submit)
+            db.session.commit()
+            form.username.data=''
+            form.firstname.data=''
+            form.lastname.data=''
+            form.email.data=''
+            form.password.data=''
+            return redirect(url_for('home'))
     return render_template('createuser.html', form=form)
 
 
@@ -60,8 +64,8 @@ def forums():
             if current_user.role=='admin':
                 form=createTopic()
                 if form.validate_on_submit():
-                    topic = Forums(user_id="0", admin_id=current_user.id, date="0", \
-                    topic_name=form.title.data, topic_description=form.description.data, role=" ")
+                    topic = Forums(admin_id=current_user.id, date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),\
+                    topic_name=form.title.data, topic_description=form.description.data)
                     db.session.add(topic)
                     db.session.commit()
                     form.title.data=''
@@ -81,6 +85,26 @@ def forums():
     else:
         return redirect(url_for('login'))
 
+@app.route('/forums/<topicID>/<topicName>', methods=['GET', 'POST'])
+def post(topicID, topicName):
+    if current_user.is_authenticated:
+        form=createPost()
+        data = db.engine.execute('SELECT * FROM post WHERE forum_id = {};'.format(topicID))
+        if request.method == 'GET': #Display posts under the topic and allow user to post
+            return render_template('post.html', posts=data, form=form)
+        if request.method == 'POST': #When user submits post
+            if form.validate_on_submit():
+                post = Post(username=current_user.username, user_id=current_user.id, date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), \
+                    post_content=form.content.data, forum_id=topicID)
+                db.session.add(post)
+                db.session.commit()
+                form.content.data=''
+                return redirect(url_for('post', topicID=topicID, topicName=topicName))
+            else:
+                return render_template('post.html', posts=data, form=form)
+
+
+
 #Dynamic user route, displays a profile given a unique first name
 @app.route('/profile/<user>', methods=['GET', 'POST'])
 def profile(user):
@@ -93,7 +117,7 @@ def profile(user):
             return 'Account Deleted'
     if request.method == 'GET': #if user is viewing profile
         if current_user.is_authenticated:
-            valid = db.session.query(User).filter_by(first_name=user).first()
+            valid = db.session.query(User).filter_by(username=user).first()
             if valid != None:
                 return render_template('profile.html', user=valid)
             else:
@@ -125,4 +149,3 @@ def events():
     all = db.session.query(Events).all()
     print(all, file=sys.stderr)
     return render_template('view_events.html', events=all)
-

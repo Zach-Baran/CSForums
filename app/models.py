@@ -5,28 +5,26 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(64), unique=True, nullable=False)
     password_hash = db.Column(db.String(256), unique=True)
+    username = db.Column(db.String(64), unique=True)
     first_name = db.Column(db.String(64), unique=False)
     last_name = db.Column(db.String(64), unique=False)
     role = db.Column(db.String(64), unique=False, nullable=False)
     code = db.Column(db.Integer, unique=False)
-    forums = db.relationship('Forums', backref='users', lazy='dynamic')
+    #forums = db.relationship('Forums', backref='users', lazy='dynamic')
     post = db.relationship('Post', backref='users', lazy='dynamic')
 
-
-    def get(self):
-        return 
     def __repr__(self):
         return self.email + ': ' + self.role + ':' + self.first_name + ':' + self.last_name
 
 class Forums(db.Model):
     __tablename__ = 'forums'
-    id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.Integer, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    admin_id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.DateTime, nullable=False)
     topic_name = db.Column(db.String(64), unique=False)
     topic_description = db.Column(db.String(64), unique=False)
-    role = db.Column(db.String(64), unique=False)
     posts = db.relationship('Post', backref='forums', lazy='dynamic')
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
 
     def __repr__(self):
         return str(self.users.id) + ': ' + str(self.date) + ': ' + self.topic_name + ': ' + self.topic_description + ': '+  self.role
@@ -47,7 +45,8 @@ class Post(db.Model):
     __tablename__ = 'post'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer,db.ForeignKey('users.id'), nullable=False)
-    date = db.Column(db.Integer, nullable=False)
+    username = db.Column(db.String(64))
+    date = db.Column(db.DateTime, nullable=False)
     post_content = db.Column(db.String(128), unique=False)
     forum_id = db.Column(db.Integer, db.ForeignKey('forums.id'))
 
