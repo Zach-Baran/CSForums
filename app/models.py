@@ -30,15 +30,15 @@ class Forums(db.Model):
         return str(self.users.id) + ': ' + str(self.date) + ': ' + self.topic_name + ': ' + self.topic_description + ': '+  self.role
 
 
-class Add_member(db.Model):
-    __tablename__ = 'add_member'
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(64), unique=True, nullable=False )
-    admin_id = db.Column(db.Integer, nullable=False)
-    approve_code = db.Column(db.Integer, nullable=False)
-
-    def __repr__(self):
-        return str(self.add_member.id) + ': ' + self.email + ': ' + str(self.admin_id)
+# class Add_member(db.Model):
+#     __tablename__ = 'add_member'
+#     id = db.Column(db.Integer, primary_key=True)
+#     email = db.Column(db.String(64), unique=True, nullable=False )
+#     admin_id = db.Column(db.Integer, nullable=False)
+#     approve_code = db.Column(db.Integer, nullable=False)
+#
+#     def __repr__(self):
+#         return str(self.add_member.id) + ': ' + self.email + ': ' + str(self.admin_id)
 
 
 class Post(db.Model):
@@ -77,10 +77,10 @@ class Career(db.Model):
         return str(self.job.id) + ': ' + str(self.job_date) + ': ' + self.description + ': ' + self.content
 
 
-class GCode(db.Model):
-    __tablename__ = 'code'
-    a_id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.Integer, nullable=False, unique=True)
-
-    def __repr__(self):
-        return str(self.a.id) + ': ' + str(self.code)
+# class GCode(db.Model):
+#     __tablename__ = 'code'
+#     a_id = db.Column(db.Integer, primary_key=True)
+#     code = db.Column(db.Integer, nullable=False, unique=True)
+#
+#     def __repr__(self):
+#         return str(self.a.id) + ': ' + str(self.code)

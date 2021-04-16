@@ -1,22 +1,27 @@
 {% extends "base.html" %}
 
 {% block content %}
+    {% if (current_user.role=='admin') %}
 
-  <form action="" method="post" novalidate>
-    {{form.hidden_tag()}}
-    <p>
-      {{form.event_name.label}}<br>
-      {{form.event_name(size=32)}}
-    </p>
-    <p>
-    	{{form.event_date.label}}<br>
-    	{{form.event_date(size=32)}}
-    </p>
-    <p>
-      {{form.description.label}}<br>
-      {{form.description(size=32)}}
-    </p>
+        <form action="" method="post" novalidate>
+                {{form.hidden_tag()}}
+            <p>
+                {{form.event_name.label}}<br>
+                {{form.event_name(size=32)}}
+            </p>
+            <p>
+    	        {{form.event_date.label}}<br>
+    	        {{form.event_date(size=32)}}
+            </p>
+            <p>
+                {{form.description.label}}<br>
+                {{form.description(size=32)}}
+            </p>
+            <p>{{form.submit()}}</p>
+        </form>
 
-    <p>{{form.submit()}}</p>
-  </form>
+    {% else %}
+        <h1>You dont have sufficient role permissions to access this route. You will be redirected to view all events</h1>
+        {% endif %}
 {% endblock %}
+
