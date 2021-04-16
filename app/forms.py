@@ -10,6 +10,7 @@ class LoginUser(FlaskForm):
     submit=SubmitField('Login')
 
 class CreateUser(FlaskForm):
+    username=StringField('Username:', validators=[DataRequired()])
     firstname=StringField('First Name:', validators=[DataRequired()])
     lastname=StringField('Last Name:', validators=[DataRequired()])
     email=StringField('Email:', validators=[DataRequired()])
@@ -27,3 +28,7 @@ class createEvent(FlaskForm):
     description=StringField('Description:', validators=[DataRequired()])
     event_date=StringField('Event Date:', validators=[DataRequired()])
     submit=SubmitField('Create Event')
+
+class createPost(FlaskForm):
+    content=StringField('Content:', validators=[DataRequired()])
+    submit=SubmitField('Post')

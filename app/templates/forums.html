@@ -8,7 +8,7 @@
 
 
   {% for title in topics %}
-    <div>{{title.topic_name}}</div>
+    <div><a href="forums/{{title.id}}/{{title.topic_name}}">{{title.topic_name}}</a></div>
     <form action="" method="post" novalidate>
       <button type="submit" name="del_topic" value={{title.id}}>Delete</button>
       <input type="hidden" name="action" value="del_topic">
