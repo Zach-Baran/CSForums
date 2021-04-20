@@ -1,8 +1,8 @@
 from app import app, db
-from app.models import User, Forums, Events, Post
+from app.models import User, Forums, Events, Post, Career
 from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
-from app.forms import CreateUser, LoginUser, createTopic, createEvent, createPost
+from app.forms import CreateUser, LoginUser, createTopic, createEvent, createPost, createCareer
 from werkzeug.security import generate_password_hash, check_password_hash
 
 import sys, time
@@ -160,3 +160,26 @@ def events():
         print(all, file=sys.stderr)
         return render_template('view_events.html', events=all)
 
+@app.route('/createcareer', methods=['GET', 'POST'])
+def createcareer():
+    if current_user.is_authenticated:
+        form = createCareer()
+        if form.validate_on_submit():
+            jobs = Career(job_name=form.job_name.data, job_date=form.job_date.data,applyBy_date=form.applyBy_date.data,
+                         description=form.description.data)
+            db.session.add(jobs)
+            db.session.commit()
+            form.job_name.data = ''
+            form.job_date.data = ''
+            form.applyBy_date.data = ''
+            form.description.data = ''
+        return render_template('create_career.html', form=form)
+    else:
+        return redirect(url_for('login'))
+
+
+@app.route('/career')
+def career():
+        all = db.session.query(Career).all()
+        print(all, file=sys.stderr)
+        return render_template('view_career.html', job=all)
