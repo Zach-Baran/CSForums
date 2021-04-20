@@ -78,6 +78,7 @@ class Career(db.Model):
         return str(self.id) + ': ' + str(self.job_date) + ': ' + self.description + ': ' + self.job_name
 
 
+
 # class GCode(db.Model):
 #     __tablename__ = 'code'
 #     a_id = db.Column(db.Integer, primary_key=True)

@@ -39,3 +39,5 @@ class createCareer(FlaskForm):
     applyBy_date = StringField('Apply By:', validators=[DataRequired()])
     description = StringField('Description:', validators=[DataRequired()])
     submit = SubmitField('Create Career')
+
+

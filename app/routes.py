@@ -183,3 +183,5 @@ def career():
         all = db.session.query(Career).all()
         print(all, file=sys.stderr)
         return render_template('view_career.html', job=all)
+
+
