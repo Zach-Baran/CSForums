@@ -35,7 +35,13 @@ class createPost(FlaskForm):
     content = StringField('Content:', validators=[DataRequired()])
     submit = SubmitField('Post')
 
-
+class createCareer(FlaskForm):
+    job_name = StringField('Job Name:', validators=[DataRequired()])
+    job_date = StringField('Posted Date:', validators=[DataRequired()])
+    applyBy_date = StringField('Apply By:', validators=[DataRequired()])
+    description = StringField('Description:', validators=[DataRequired()])
+    submit = SubmitField('Create Career')
+    
 class memberRequest(FlaskForm):
     email = StringField('Email:', validators=[DataRequired()])
     submit = SubmitField('Submit')

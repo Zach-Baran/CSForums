@@ -69,12 +69,14 @@ class Events(db.Model):
 class Career(db.Model):
     __tablename__ = 'job'
     id = db.Column(db.Integer, primary_key=True)
-    job_name = db.Column(db.String(64), nullable=False,)
-    job_date = db.Column(db.Integer, nullable=False)
+    job_name = db.Column(db.String(64), unique=False, nullable=False,)
+    job_date = db.Column(db.String(64), unique=False, nullable=False)
+    applyBy_date = db.Column(db.String(64), unique=False, nullable=False)
     description = db.Column(db.String(64), unique=False, nullable=False)
 
     def __repr__(self):
-        return str(self.job.id) + ': ' + str(self.job_date) + ': ' + self.description + ': ' + self.content
+        return str(self.id) + ': ' + str(self.job_date) + ': ' + self.description + ': ' + self.job_name
+
 
 
 # class GCode(db.Model):
