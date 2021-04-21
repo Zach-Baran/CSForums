@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form action="" method="post" novalidate>
+	<table>
+		<tr>
+			<th>Prospect Member Email</th>
+            <th> Admin generated code</th>
+		</tr>
+		{% for prospect  in regrequest %}
+		<tr>
+			<td>{{prospect.email}}</td>
+            <td>{{prospect.admin_code}}</td>
+		</tr>
+		{% endfor %}
+
+	</table>
+{% endblock %}
