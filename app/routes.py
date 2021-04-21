@@ -1,14 +1,12 @@
 from app import app, db
-from app.models import User, Forums, Events, Post
+from app.models import User, Forums, Events, Post, RegisterRequest
 from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
-from app.forms import CreateUser, LoginUser, createTopic, createEvent, createPost
+from app.forms import CreateUser, LoginUser, createTopic, createEvent, createPost, memberRequest
 from werkzeug.security import generate_password_hash, check_password_hash
 
-import sys, time
+import sys
 import datetime
-
-
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -25,15 +23,16 @@ def register():
     if form.validate_on_submit():
         checkUsers = db.session.query(User).filter_by(username=form.username.data).first()
         if checkUsers == None:
-            submit = User(username=form.username.data, email=form.email.data, first_name=form.firstname.data, last_name=form.lastname.data,  \
-                password_hash=generate_password_hash(form.password.data), role="Member", code=0)
+            submit = User(username=form.username.data, email=form.email.data, first_name=form.firstname.data,
+                          last_name=form.lastname.data, \
+                          password_hash=generate_password_hash(form.password.data), role="Member", code=0)
             db.session.add(submit)
             db.session.commit()
-            form.username.data=''
-            form.firstname.data=''
-            form.lastname.data=''
-            form.email.data=''
-            form.password.data=''
+            form.username.data = ''
+            form.firstname.data = ''
+            form.lastname.data = ''
+            form.email.data = ''
+            form.password.data = ''
             return redirect(url_for('home'))
     return render_template('createuser.html', form=form)
 
@@ -68,8 +67,8 @@ def forums():
             if current_user.role == 'admin':
                 form = createTopic()
                 if form.validate_on_submit():
-                    topic = Forums(admin_id=current_user.id, date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),\
-                    topic_name=form.title.data, topic_description=form.description.data)
+                    topic = Forums(admin_id=current_user.id, date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), \
+                                   topic_name=form.title.data, topic_description=form.description.data)
                     db.session.add(topic)
                     db.session.commit()
                     form.title.data = ''
@@ -90,30 +89,29 @@ def forums():
         return redirect(url_for('login'))
 
 
-
 # Dynamic user route, displays a profile given a unique first name
 
 @app.route('/forums/<topicID>/<topicName>', methods=['GET', 'POST'])
 def post(topicID, topicName):
     if current_user.is_authenticated:
-        form=createPost()
+        form = createPost()
         data = db.engine.execute('SELECT * FROM post WHERE forum_id = {};'.format(topicID))
-        if request.method == 'GET': #Display posts under the topic and allow user to post
+        if request.method == 'GET':  # Display posts under the topic and allow user to post
             return render_template('post.html', posts=data, form=form)
-        if request.method == 'POST': #When user submits post
+        if request.method == 'POST':  # When user submits post
             if form.validate_on_submit():
-                post = Post(username=current_user.username, user_id=current_user.id, date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), \
-                    post_content=form.content.data, forum_id=topicID)
+                post = Post(username=current_user.username, user_id=current_user.id,
+                            date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), \
+                            post_content=form.content.data, forum_id=topicID)
                 db.session.add(post)
                 db.session.commit()
-                form.content.data=''
+                form.content.data = ''
                 return redirect(url_for('post', topicID=topicID, topicName=topicName))
             else:
                 return render_template('post.html', posts=data, form=form)
 
 
-
-#Dynamic user route, displays a profile given a unique first name
+# Dynamic user route, displays a profile given a unique first name
 
 @app.route('/profile/<user>', methods=['GET', 'POST'])
 def profile(user):
@@ -139,24 +137,45 @@ def profile(user):
 @app.route('/createevents/', methods=['GET', 'POST'])
 def createevents():
     if current_user.is_authenticated:
-        #if current_user.role=='admin':
-            form = createEvent()
-            if form.validate_on_submit():
-                event = Events(event_name=form.event_name.data, event_date=form.event_date.data,
-                                    description=form.description.data)
-                db.session.add(event)
-                db.session.commit()
-                form.event_name.data = ''
-                form.event_date.data = ''
-                form.description.data = ''
-            return render_template('create_event.html', form=form)
+        # if current_user.role=='admin':
+        form = createEvent()
+        if form.validate_on_submit():
+            event = Events(event_name=form.event_name.data, event_date=form.event_date.data,
+                           description=form.description.data)
+            db.session.add(event)
+            db.session.commit()
+            form.event_name.data = ''
+            form.event_date.data = ''
+            form.description.data = ''
+        return render_template('create_event.html', form=form)
     else:
         return redirect(url_for('login'))
+
 
 # Function handles viewing events
 @app.route('/events')
 def events():
-        all = db.session.query(Events).all()
-        print(all, file=sys.stderr)
-        return render_template('view_events.html', events=all)
+    all = db.session.query(Events).all()
+    print(all, file=sys.stderr)
+    return render_template('view_events.html', events=all)
 
+
+@app.route('/member_req', methods=['GET', 'POST'])
+def member_req():
+    form = memberRequest()
+    if form.validate_on_submit():
+        req = RegisterRequest(email=form.email.data)
+        db.session.add(req)
+        db.session.commit()
+        form.email.data = ''
+    return render_template('memreq.html', form=form)
+
+@app.route('/userauth')
+def userauth():
+    if current_user.is_authenticated:
+        if current_user.role == 'admin':
+            all = db.session.query(RegisterRequest).all()
+            print(all, file=sys.stderr)
+            return render_template('userauth.html', regrequest=all)
+        else:
+            return redirect(url_for('home'))
