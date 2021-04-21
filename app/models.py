@@ -84,3 +84,13 @@ class Career(db.Model):
 #
 #     def __repr__(self):
 #         return str(self.a.id) + ': ' + str(self.code)
+
+class RegisterRequest(db.Model):
+    __tablename__ = 'regrequest'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    email = db.Column(db.String(64), unique=True, nullable=False)
+    admin_code = db.Column(db.String(64), unique=True, nullable=True)
+
+    def __repr__(self):
+        return str(self.email) + ': ' + str(self.admin_code)
+
