@@ -58,7 +58,7 @@ class Events(db.Model):
     __tablename__ = 'events'
     id = db.Column(db.Integer, primary_key=True)
     event_name = db.Column(db.String(64), nullable=False,)
-    event_date = db.Column(db.String(64), nullable=False)
+    event_date = db.Column(db.DateTime, nullable=False)
     description = db.Column(db.String(64), unique=False, nullable=True)
     event_content = db.Column(db.String(128), unique=False)
 
@@ -95,4 +95,3 @@ class RegisterRequest(db.Model):
 
     def __repr__(self):
         return str(self.email) + ': ' + str(self.admin_code)
-

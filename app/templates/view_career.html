@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+{% if current_user.role=='admin' %}
+	<a href="/createcareer">Create Job Post</a>
+{% endif %}
+
 	<table>
 		<tr>
 			<th>Job Name</th>
@@ -19,5 +24,3 @@
 
 	</table>
 {% endblock %}
-
-
