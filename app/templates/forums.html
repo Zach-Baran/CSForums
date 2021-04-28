@@ -1,19 +1,22 @@
 {% extends "base.html" %}
 
 {% block content %}
+      <h1 style="text-align:center;">Topics</h1>
+  {% for topic in topics %}
 
-  {% if current_user.role=='admin' %}
-    <a href="/forums/createtopic">Post Forum Topic</a>
-  {% endif %}
+      <div class="container" style="width:30%;border:1px solid black;margin-bottom:5px;">
+
+      <a href="forums/{{topic.id}}/{{topic.topic_name}}" style="word-wrap: break-word;">{{topic.topic_name}}</a>
+      <p>{{topic.date}}</p>
+      <p style="word-wrap: break-word;">{{topic.topic_description}}</p>
 
 
-  {% for title in topics %}
-    <div><a href="forums/{{title.id}}/{{title.topic_name}}">{{title.topic_name}}</a></div>
     {% if current_user.role=='admin' %}
     <form action="" method="post" novalidate>
-      <button type="submit" name="del_topic" value={{title.id}}>Delete</button>
+      <button type="submit" name="del_topic" value={{topic.id}}>Delete</button>
       <input type="hidden" name="action" value="del_topic">
     </form>
+    </div>
     {% endif %}
   {% endfor %}
 

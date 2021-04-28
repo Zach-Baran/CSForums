@@ -86,7 +86,7 @@ def forums():
             if request.method == 'POST':  # if admin clicked delete topic button
                 if request.form['action'] == 'del_topic':
                     db.engine.execute('DELETE FROM forums where id = {};'.format(request.form.get("del_topic")))
-                    db.engine.execute('UPDATE post SET status = 0 WHERE forum_id = {}'.request.form.get('del_topic'))
+                    db.engine.execute('UPDATE post SET status = 0 WHERE forum_id = {}'.format(request.form.get('del_topic')))
                     return redirect(url_for('forums'))
             if request.method == 'GET':
                 topics = db.engine.execute('SELECT * from forums;')
@@ -108,7 +108,7 @@ def post(topicID, topicName):
             if form.validate_on_submit():
                 post = Post(username=current_user.username, user_id=current_user.id,
                             date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), \
-                            post_content=form.content.data, forum_id=topicID)
+                            post_content=form.content.data, forum_id=topicID, status='1')
                 db.session.add(post)
                 db.session.commit()
                 form.content.data = ''
