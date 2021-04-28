@@ -6,6 +6,7 @@ from app.forms import CreateUser, LoginUser, createTopic, createEvent, createPos
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_mail import Mail, Message
 from threading import Thread
+
 import sys
 import datetime
 
@@ -85,6 +86,7 @@ def forums():
             if request.method == 'POST':  # if admin clicked delete topic button
                 if request.form['action'] == 'del_topic':
                     db.engine.execute('DELETE FROM forums where id = {};'.format(request.form.get("del_topic")))
+                    db.engine.execute('UPDATE post SET status = 0 WHERE forum_id = {}'.request.form.get('del_topic'))
                     return redirect(url_for('forums'))
             if request.method == 'GET':
                 topics = db.engine.execute('SELECT * from forums;')
@@ -129,11 +131,11 @@ def profile(user):
         if request.method == 'GET':  # if user is viewing profile
             if current_user.is_authenticated:
                 valid = db.session.query(User).filter_by(username=user).first()
-                posts = db.session.query(Post).filter_by(username=current_user.username).all()
+                posts = db.session.query(Post).filter_by(username=user, status='1').all()
                 if valid != None:
                     return render_template('profile.html', user=valid, posts=posts)
                 else:
-                    return redirect(url_for('home'))
+                    abort(404)
             else:
                 return redirect(url_for('login'))
     return redirect(url_for('home'))
@@ -158,7 +160,7 @@ def createevents():
             db.session.commit()
             date = form.event_date.data - datetime.timedelta(hours=12)
             date = date.strftime('%m/%d at %H:%M EST')
-            subject = "A new event has been posted: " + form.event_name.data+" taking place on "+date
+            subject = "A new event has been posted: "+form.event_name.data+" taking place on "+date
             body = form.description.data
             #Create thread so admin does not have to wait for emails to be sent before leaving page
             emailThreading = Thread(target=sendMassEmail, args=(subject, body,))
@@ -170,7 +172,7 @@ def createevents():
     else:
         abort(404)
 
-#Allows admins to send a mass email 
+#Allows admins to send a mass email
 @app.route('/announcement', methods=['GET', 'POST'])
 def announcement():
     if current_user.role=='admin':

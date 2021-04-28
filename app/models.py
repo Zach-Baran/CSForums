@@ -10,7 +10,6 @@ class User(db.Model, UserMixin):
     last_name = db.Column(db.String(64), unique=False)
     role = db.Column(db.String(64), unique=False, nullable=False)
     code = db.Column(db.Integer, unique=False)
-    #forums = db.relationship('Forums', backref='users', lazy='dynamic')
     post = db.relationship('Post', backref='users', lazy='dynamic')
 
     def __repr__(self):
@@ -49,6 +48,7 @@ class Post(db.Model):
     date = db.Column(db.DateTime, nullable=False)
     post_content = db.Column(db.String(128), unique=False)
     forum_id = db.Column(db.Integer, db.ForeignKey('forums.id'))
+    status = db.Column(db.String(1))
 
     def __repr__(self):
         return str(self.post.id) + ': ' + str(self.forum_id) + ': ' + str(self.user_id) + ': ' + str(self.date) + ': ' + self.content
@@ -58,7 +58,7 @@ class Events(db.Model):
     __tablename__ = 'events'
     id = db.Column(db.Integer, primary_key=True)
     event_name = db.Column(db.String(64), nullable=False,)
-    event_date = db.Column(db.DateTime, nullable=False)
+    event_date = db.Column(db.String(64), nullable=False)
     description = db.Column(db.String(64), unique=False, nullable=True)
     event_content = db.Column(db.String(128), unique=False)
 
