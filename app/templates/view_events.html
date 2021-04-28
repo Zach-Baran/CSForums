@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+{% if current_user.role=='admin' %}
+	<a href="/events/createevent">Create Event</a>
+{% endif %}
+
+
 	<table>
 		<tr>
 			<th>Event Name</th>
@@ -10,6 +16,7 @@
 		{% for event in events %}
 		<tr>
 			<td>{{event.event_name}}</td>
+			
 			<td>{{event.event_date}}</td>
 			<td>{{event.description}}</td>
 		</tr>
@@ -17,6 +24,3 @@
 
 	</table>
 {% endblock %}
-
-
-

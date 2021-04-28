@@ -16,4 +16,8 @@
     </form>
   {% endif %}
 
+  {% for post in posts %}
+    <p>{{post.post_content}}</p>
+  {% endfor %}
+
 {% endblock %}

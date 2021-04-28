@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, SubmitField, TextField, PasswordField
+from wtforms.fields.html5 import DateTimeLocalField
 from wtforms.validators import DataRequired
 
 
@@ -17,7 +18,6 @@ class CreateUser(FlaskForm):
     password = PasswordField('Password:', validators=[DataRequired()])
     submit = SubmitField('Login')
 
-
 class createTopic(FlaskForm):
     title = StringField('Title:', validators=[DataRequired()])
     description = StringField('Description:', validators=[DataRequired()])
@@ -27,7 +27,7 @@ class createTopic(FlaskForm):
 class createEvent(FlaskForm):
     event_name = StringField('Event Name:', validators=[DataRequired()])
     description = StringField('Description:', validators=[DataRequired()])
-    event_date = StringField('Event Date:', validators=[DataRequired()])
+    event_date = DateTimeLocalField('Event Date:', format='%Y-%m-%dT%H:%M', validators=[DataRequired()])
     submit = SubmitField('Create Event')
 
 
@@ -41,7 +41,12 @@ class createCareer(FlaskForm):
     applyBy_date = StringField('Apply By:', validators=[DataRequired()])
     description = StringField('Description:', validators=[DataRequired()])
     submit = SubmitField('Create Career')
-    
+
 class memberRequest(FlaskForm):
     email = StringField('Email:', validators=[DataRequired()])
     submit = SubmitField('Submit')
+
+class emailAnnouncement(FlaskForm):
+    topic = StringField('Email Topic:', validators=[DataRequired()])
+    message = StringField('Message:', validators=[DataRequired()])
+    submit = SubmitField('Send Emails')
