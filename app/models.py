@@ -21,7 +21,7 @@ class Forums(db.Model):
     admin_id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.DateTime, nullable=False)
     topic_name = db.Column(db.String(64), unique=False)
-    topic_description = db.Column(db.String(64), unique=False)
+    topic_description = db.Column(db.String(500), unique=False)
     posts = db.relationship('Post', backref='forums', lazy='dynamic')
 
 
@@ -46,7 +46,7 @@ class Post(db.Model):
     user_id = db.Column(db.Integer,db.ForeignKey('users.id'), nullable=False)
     username = db.Column(db.String(64))
     date = db.Column(db.DateTime, nullable=False)
-    post_content = db.Column(db.String(128), unique=False)
+    post_content = db.Column(db.String(500), unique=False)
     forum_id = db.Column(db.Integer, db.ForeignKey('forums.id'))
     status = db.Column(db.String(1))
 
@@ -58,9 +58,9 @@ class Events(db.Model):
     __tablename__ = 'events'
     id = db.Column(db.Integer, primary_key=True)
     event_name = db.Column(db.String(64), nullable=False,)
-    event_date = db.Column(db.String(64), nullable=False)
-    description = db.Column(db.String(64), unique=False, nullable=True)
-    event_content = db.Column(db.String(128), unique=False)
+    event_date = db.Column(db.DateTime, nullable=False)
+    description = db.Column(db.String(500), unique=False, nullable=True)
+    event_content = db.Column(db.String(255), unique=False)
 
     def __repr__(self):
         return self.event_name + ': ' + str(self.event_date) + ': ' + self.description
