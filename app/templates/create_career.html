@@ -1,34 +1,23 @@
 {% extends "base.html" %}
-
+{% from "formhelper.html" import render_field %}
 {% block content %}
     {% if (current_user.role=='admin') %}
 
         <form action="" method="post" novalidate>
                 {{form.hidden_tag()}}
             <p>
-                {{form.job_name.label}}<br>
-                {{form.job_name(size=32)}}
+                {{render_field(form.job_name)}}
+            </p>
+            
+            <p>
+              {{render_field(form.applyBy_date)}}
+
             </p>
             <p>
-    	        {{form.job_date.label}}<br>
-    	        {{form.job_date(size=32)}}
-            </p>
-            <p>
-    	        {{form.applyBy_date.label}}<br>
-    	        {{form.applyBy_date(size=32)}}
-            </p>
-            <p>
-                {{form.description.label}}<br>
-                {{form.description(size=32)}}
+                {{render_field(form.description)}}
             </p>
             <p>{{form.submit()}}</p>
         </form>
 
-    {% else %}
-        <h1>You dont have sufficient role permissions to access this route. You will be redirected to view all events</h1>
-        {% endif %}
+    {% endif %}
 {% endblock %}
-
-
-
-

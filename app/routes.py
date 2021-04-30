@@ -6,7 +6,6 @@ from app.forms import CreateUser, LoginUser, createTopic, createEvent, createPos
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_mail import Mail, Message
 from threading import Thread
-
 import sys
 import datetime
 
@@ -76,6 +75,7 @@ def forums():
                                    topic_name=form.title.data, topic_description=form.description.data)
                     db.session.add(topic)
                     db.session.commit()
+
                     form.title.data = ''
                     form.description.data = ''
                     return redirect(url_for('home'))
@@ -89,6 +89,7 @@ def forums():
                     db.engine.execute('UPDATE post SET status = 0 WHERE forum_id = {}'.format(request.form.get('del_topic')))
                     return redirect(url_for('forums'))
             if request.method == 'GET':
+
                 topics = db.engine.execute('SELECT * from forums;')
                 return render_template('forums.html', topics=topics)
     else:
@@ -140,12 +141,30 @@ def profile(user):
                 return redirect(url_for('login'))
     return redirect(url_for('home'))
 
+#Allows admins to send a mass email
+@app.route('/announcement', methods=['GET', 'POST'])
+def announcement():
+    if current_user.role=='admin':
+        form = emailAnnouncement()
+        if form.validate_on_submit():
+            subject = form.topic.data
+            body = form.message.data
+            emailThreading = Thread(target=sendMassEmail, args=(subject, body,))
+            emailThreading.start()
+            form.topic.data=''
+            form.message.data=''
+            flash('Emails sent')
+        return render_template('announcements.html', form=form)
+    else:
+        abort(404)
+
 #Sends email to all registered users
 def sendMassEmail(subject, body):
     with app.app_context():
         recipient = db.engine.execute('SELECT email FROM users;')
         for email in recipient:
             mail.send(Message(subject, recipients=[email[0]], body=body))
+
 
 
 # Function handles viewing creating events
@@ -168,24 +187,10 @@ def createevents():
             form.event_name.data = ''
             form.event_date.data = ''
             form.description.data = ''
+            flash('Event Posted and members notified')
         return render_template('create_event.html', form=form)
     else:
         abort(404)
-
-#Allows admins to send a mass email
-@app.route('/announcement', methods=['GET', 'POST'])
-def announcement():
-    if current_user.role=='admin':
-        form = emailAnnouncement()
-        if form.validate_on_submit():
-            subject = form.topic.data
-            body = form.message.data
-            emailThreading = Thread(target=sendMassEmail, args=(subject, body,))
-            emailThreading.start()
-            form.topic.data=''
-            form.message.data=''
-        return render_template('announcements.html', form=form)
-    abort(404)
 
 # Function handles viewing events
 @app.route('/events')
@@ -198,12 +203,11 @@ def createcareer():
     if current_user.role=='admin':
         form = createCareer()
         if form.validate_on_submit():
-            jobs = Career(job_name=form.job_name.data, job_date=form.job_date.data,applyBy_date=form.applyBy_date.data,
+            jobs = Career(job_name=form.job_name.data, job_date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),applyBy_date=form.applyBy_date.data,
                          description=form.description.data)
             db.session.add(jobs)
             db.session.commit()
             form.job_name.data = ''
-            form.job_date.data = ''
             form.applyBy_date.data = ''
             form.description.data = ''
         return render_template('create_career.html', form=form)
@@ -213,7 +217,7 @@ def createcareer():
 @app.route('/career')
 def career():
         all = db.session.query(Career).all()
-        print(all, file=sys.stderr)
+        
         return render_template('view_career.html', job=all)
 
 @app.route('/member_req', methods=['GET', 'POST'])
