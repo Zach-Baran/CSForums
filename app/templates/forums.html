@@ -1,10 +1,23 @@
 {% extends "base.html" %}
 
 {% block content %}
-      <h1 style="text-align:center;">Topics</h1>
+                                    
+    <body style=" background-image: url('https://images.pexels.com/photos/459411/pexels-photo-459411.jpeg?cs=srgb&dl=board-chip-circuit-circuit-board-459411.jpg&fm=jpg');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+
+">
+      <style>
+
+.container:hover {
+  color: forestgreen;
+}
+</style>
+      <h1 style="text-align:center;background: linear-gradient(to right, #e6ffe6, #004D1A) no-repeat 0 0;">Topics</h1>
   {% for topic in topics %}
 
-      <div class="container" style="width:30%;border:1px solid black;margin-bottom:5px;">
+      <div class="container" style="width:50%;border:1px solid black;margin-bottom:5px; background-color: silver;">
 
       <a href="forums/{{topic.id}}/{{topic.topic_name}}" style="word-wrap: break-word;">{{topic.topic_name}}</a>
       <p>{{topic.date}}</p>
@@ -21,5 +34,6 @@
     </div>
   {% endfor %}
 
-
+    </body>>
 {% endblock %}
+

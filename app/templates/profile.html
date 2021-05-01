@@ -1,9 +1,29 @@
 {% extends "base.html" %}
 
 {% block content %}
+<body style=" background-image:url('https://promises2keep.files.wordpress.com/2017/10/scsu.png');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;">
 
+  <h1 id="e" style="font-size: 20px"> {{user.username}}</h1>
+    <script>
+     myDate = new Date();
+     hrs = myDate.getHours();
 
-  <h1> {{user.username}}</h1>
+    x= "";
+
+    if (hrs < 12)
+        x = 'Good Morning';
+    else if (hrs >= 12 && hrs <= 17)
+        x = 'Good Afternoon';
+    else if (hrs >= 17 && hrs <= 24)
+        x = 'Good Evening';
+
+    document.getElementById('e').innerHTML =
+        '<b>' + x + '<h1 id="e" style="font-size: 20px"> {{user.username}}</h1> '+ ' Welcome to the SCSU Computer Science Club!' ;
+
+</script>
   {% if (current_user.role=='admin') %}
 
     <form action="" method="post" novalidate>
@@ -19,5 +39,5 @@
   {% for post in posts %}
     <p>{{post.post_content}}</p>
   {% endfor %}
-
+</body>
 {% endblock %}

@@ -1,13 +1,29 @@
 {% extends "base.html" %}
 
+
 {% block content %}
-<h1 style="text-align:center;">Upcoming Events</h1>
+
+    <body style=" background-image: url('https://images.pexels.com/photos/459411/pexels-photo-459411.jpeg?cs=srgb&dl=board-chip-circuit-circuit-board-459411.jpg&fm=jpg');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+
+">
+    <style>
+
+.col-sm:hover {
+  color: forestgreen;
+}
+</style>
+<h1 style="text-align:center;background: linear-gradient(to right, #e6ffe6, #004D1A) no-repeat 0 0;">Upcoming Events</h1>
+
 <div class="container" style="margin-bottom:30px;">
 
 {% for row in events|batch(2) %}
 <div class="row" style="width:90%;">
 	{% for event in row %}
-    <div class="col-sm" style="border:1px solid black;text-align:center;width:100px;margin:5px;">{{event.event_name}}
+    <div class="col-sm" style="border:1px solid black;text-align:center;
+    width:100px;margin:7px;background-color: silver; ">{{event.event_name}}
 			<div>{{event.event_date}}</div>
 			<br>
 			<div style="word-wrap:break-word;">{{event.description}}</div>
@@ -19,5 +35,5 @@
 {% endfor %}
 
 </div>
-
+    </body>
 {% endblock %}
