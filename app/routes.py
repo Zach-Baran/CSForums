@@ -1,12 +1,11 @@
 from app import app, db, mail
 from app.models import User, Forums, Events, Post, Career, RegisterRequest
-from flask import Flask, render_template, redirect, url_for, flash, request, abort
+from flask import Flask, render_template, redirect, url_for, flash, request, abort, session
 from flask_login import login_user, logout_user, login_required, current_user
 from app.forms import CreateUser, LoginUser, createTopic, createEvent, createPost, createCareer, memberRequest, emailAnnouncement
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_mail import Mail, Message
 from threading import Thread
-
 import sys
 import datetime
 
@@ -76,6 +75,7 @@ def forums():
                                    topic_name=form.title.data, topic_description=form.description.data)
                     db.session.add(topic)
                     db.session.commit()
+
                     form.title.data = ''
                     form.description.data = ''
                     return redirect(url_for('home'))
@@ -89,12 +89,20 @@ def forums():
                     db.engine.execute('UPDATE post SET status = 0 WHERE forum_id = {}'.format(request.form.get('del_topic')))
                     return redirect(url_for('forums'))
             if request.method == 'GET':
+
                 topics = db.engine.execute('SELECT * from forums;')
                 return render_template('forums.html', topics=topics)
     else:
         return redirect(url_for('login'))
 
 
+#Function to test if session variable is defined
+def postWait():
+    try:
+        post = (datetime.datetime.now()-session['postTime']).total_seconds()
+        return post
+    except KeyError:
+        session['postTime']=None
 
 #Takes unique topic id and the topic name
 @app.route('/forums/<topicID>/<topicName>', methods=['GET', 'POST'])
@@ -105,15 +113,21 @@ def post(topicID, topicName):
         if request.method == 'GET':  # Display posts under the topic and allow user to post
             return render_template('post.html', posts=data, form=form)
         if request.method == 'POST':  # When user submits post
-            if form.validate_on_submit():
-                post = Post(username=current_user.username, user_id=current_user.id,
-                            date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), \
-                            post_content=form.content.data, forum_id=topicID, status='1')
-                db.session.add(post)
-                db.session.commit()
-                form.content.data = ''
-                return redirect(url_for('post', topicID=topicID, topicName=topicName))
+            #Check if user has posted within the past 60 seconds
+            if postWait()==None or postWait() > 60:
+                if form.validate_on_submit():
+                    post = Post(username=current_user.username, user_id=current_user.id,
+                                date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), \
+                                post_content=form.content.data, forum_id=topicID, status='1')
+                    session['postTime']=datetime.datetime.now()
+                    db.session.add(post)
+                    db.session.commit()
+                    form.content.data = ''
+                    return redirect(url_for('post', topicID=topicID, topicName=topicName))
+                else:
+                    return render_template('post.html', posts=data, form=form)
             else:
+                flash('Please wait 1 minute in between posts')
                 return render_template('post.html', posts=data, form=form)
 
 
@@ -140,12 +154,30 @@ def profile(user):
                 return redirect(url_for('login'))
     return redirect(url_for('home'))
 
+#Allows admins to send a mass email
+@app.route('/announcement', methods=['GET', 'POST'])
+def announcement():
+    if current_user.role=='admin':
+        form = emailAnnouncement()
+        if form.validate_on_submit():
+            subject = form.topic.data
+            body = form.message.data
+            emailThreading = Thread(target=sendMassEmail, args=(subject, body,))
+            emailThreading.start()
+            form.topic.data=''
+            form.message.data=''
+            flash('Emails sent')
+        return render_template('announcements.html', form=form)
+    else:
+        abort(404)
+
 #Sends email to all registered users
 def sendMassEmail(subject, body):
     with app.app_context():
         recipient = db.engine.execute('SELECT email FROM users;')
         for email in recipient:
             mail.send(Message(subject, recipients=[email[0]], body=body))
+
 
 
 # Function handles viewing creating events
@@ -168,24 +200,10 @@ def createevents():
             form.event_name.data = ''
             form.event_date.data = ''
             form.description.data = ''
+            flash('Event Posted and members notified')
         return render_template('create_event.html', form=form)
     else:
         abort(404)
-
-#Allows admins to send a mass email
-@app.route('/announcement', methods=['GET', 'POST'])
-def announcement():
-    if current_user.role=='admin':
-        form = emailAnnouncement()
-        if form.validate_on_submit():
-            subject = form.topic.data
-            body = form.message.data
-            emailThreading = Thread(target=sendMassEmail, args=(subject, body,))
-            emailThreading.start()
-            form.topic.data=''
-            form.message.data=''
-        return render_template('announcements.html', form=form)
-    abort(404)
 
 # Function handles viewing events
 @app.route('/events')
@@ -198,12 +216,11 @@ def createcareer():
     if current_user.role=='admin':
         form = createCareer()
         if form.validate_on_submit():
-            jobs = Career(job_name=form.job_name.data, job_date=form.job_date.data,applyBy_date=form.applyBy_date.data,
+            jobs = Career(job_name=form.job_name.data, job_date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),applyBy_date=form.applyBy_date.data,
                          description=form.description.data)
             db.session.add(jobs)
             db.session.commit()
             form.job_name.data = ''
-            form.job_date.data = ''
             form.applyBy_date.data = ''
             form.description.data = ''
         return render_template('create_career.html', form=form)
@@ -213,7 +230,7 @@ def createcareer():
 @app.route('/career')
 def career():
         all = db.session.query(Career).all()
-        print(all, file=sys.stderr)
+
         return render_template('view_career.html', job=all)
 
 @app.route('/member_req', methods=['GET', 'POST'])
