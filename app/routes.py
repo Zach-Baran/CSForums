@@ -1,6 +1,6 @@
 from app import app, db, mail
 from app.models import User, Forums, Events, Post, Career, RegisterRequest
-from flask import Flask, render_template, redirect, url_for, flash, request, abort
+from flask import Flask, render_template, redirect, url_for, flash, request, abort, session
 from flask_login import login_user, logout_user, login_required, current_user
 from app.forms import CreateUser, LoginUser, createTopic, createEvent, createPost, createCareer, memberRequest, emailAnnouncement
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -96,6 +96,13 @@ def forums():
         return redirect(url_for('login'))
 
 
+#Function to test if session variable is defined
+def postWait():
+    try:
+        post = (datetime.datetime.now()-session['postTime']).total_seconds()
+        return post
+    except KeyError:
+        session['postTime']=None
 
 #Takes unique topic id and the topic name
 @app.route('/forums/<topicID>/<topicName>', methods=['GET', 'POST'])
@@ -106,15 +113,21 @@ def post(topicID, topicName):
         if request.method == 'GET':  # Display posts under the topic and allow user to post
             return render_template('post.html', posts=data, form=form)
         if request.method == 'POST':  # When user submits post
-            if form.validate_on_submit():
-                post = Post(username=current_user.username, user_id=current_user.id,
-                            date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), \
-                            post_content=form.content.data, forum_id=topicID, status='1')
-                db.session.add(post)
-                db.session.commit()
-                form.content.data = ''
-                return redirect(url_for('post', topicID=topicID, topicName=topicName))
+            #Check if user has posted within the past 60 seconds
+            if postWait()==None or postWait() > 60:
+                if form.validate_on_submit():
+                    post = Post(username=current_user.username, user_id=current_user.id,
+                                date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), \
+                                post_content=form.content.data, forum_id=topicID, status='1')
+                    session['postTime']=datetime.datetime.now()
+                    db.session.add(post)
+                    db.session.commit()
+                    form.content.data = ''
+                    return redirect(url_for('post', topicID=topicID, topicName=topicName))
+                else:
+                    return render_template('post.html', posts=data, form=form)
             else:
+                flash('Please wait 1 minute in between posts')
                 return render_template('post.html', posts=data, form=form)
 
 
@@ -217,7 +230,7 @@ def createcareer():
 @app.route('/career')
 def career():
         all = db.session.query(Career).all()
-        
+
         return render_template('view_career.html', job=all)
 
 @app.route('/member_req', methods=['GET', 'POST'])
