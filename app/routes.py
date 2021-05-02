@@ -127,7 +127,7 @@ def post(topicID, topicName):
                 else:
                     return render_template('post.html', posts=data, form=form)
             else:
-                flash('Please wait 1 minute in between posts')
+                flash('Please wait 1 minute before posting again')
                 return render_template('post.html', posts=data, form=form)
 
 
@@ -144,10 +144,11 @@ def profile(user):
                 return 'Account Deleted'
         if request.method == 'GET':  # if user is viewing profile
             if current_user.is_authenticated:
-                valid = db.session.query(User).filter_by(username=user).first()
-                posts = db.session.query(Post).filter_by(username=user, status='1').all()
-                if valid != None:
-                    return render_template('profile.html', user=valid, posts=posts)
+                posts = db.engine.execute('SELECT post.post_content,post.date, forums.topic_name, forums.id, post.username FROM \
+                                            post INNER JOIN forums WHERE post.forum_id=forums.id AND post.username="{}" AND post.status="1" \
+                                            ORDER BY post.date DESC;'.format(user))
+                if posts != None:
+                    return render_template('profile.html', posts=posts)
                 else:
                     abort(404)
             else:

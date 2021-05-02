@@ -46,7 +46,7 @@ class Post(db.Model):
     user_id = db.Column(db.Integer,db.ForeignKey('users.id'), nullable=False)
     username = db.Column(db.String(64))
     date = db.Column(db.DateTime, nullable=False)
-    post_content = db.Column(db.String(500), unique=False)
+    post_content = db.Column(db.String(1000), unique=False)
     forum_id = db.Column(db.Integer, db.ForeignKey('forums.id'))
     status = db.Column(db.String(1))
 
@@ -57,8 +57,8 @@ class Post(db.Model):
 class Events(db.Model):
     __tablename__ = 'events'
     id = db.Column(db.Integer, primary_key=True)
-    event_name = db.Column(db.String(64), nullable=False,)
-    event_date = db.Column(db.DateTime, nullable=False)
+    event_name = db.Column(db.String(64), nullable=False)
+    event_date = db.Column(db.String(16), nullable=False)
     description = db.Column(db.String(500), unique=False, nullable=True)
     event_content = db.Column(db.String(255), unique=False)
 

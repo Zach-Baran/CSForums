@@ -4,9 +4,11 @@
 {% block content %}
 
   {% for post in posts %}
-  <div>{{post.username}}
+  <div class="container">
+  <div>{{post.username}}</div>
   <div>{{post.date}}</div>
-  <div>{{post.post_content}}</div>
+  <div style="word-wrap:break-word;">{{post.post_content}}</div>
+  </div>
 
   {% endfor %}
 

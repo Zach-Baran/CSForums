@@ -20,7 +20,7 @@
 <div class="container" style="margin-bottom:30px;">
 
 {% for row in events|batch(2) %}
-<div class="row" style="width:90%;">
+<div class="row" style="width:90%;background-color:#8c8c8c;">
 	{% for event in row %}
     <div class="col-sm" style="border:1px solid black;text-align:center;
     width:100px;margin:7px;background-color: silver; ">{{event.event_name}}
