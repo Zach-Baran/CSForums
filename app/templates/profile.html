@@ -6,7 +6,7 @@
   background-attachment: fixed;
   background-size: cover;">
 
-  <h1 id="e" style="font-size: 20px"> {{user.username}}</h1>
+  <h1 id="e" style="font-size: 20px"> {{posts.username}}</h1>
     <script>
      myDate = new Date();
      hrs = myDate.getHours();
@@ -21,23 +21,31 @@
         x = 'Good Evening';
 
     document.getElementById('e').innerHTML =
-        '<b>' + x + '<h1 id="e" style="font-size: 20px"> {{user.username}}</h1> '+ ' Welcome to the SCSU Computer Science Club!' ;
+        '<b>' + x + '<h1 id="e" style="font-size: 20px"> {{posts.username}}</h1> '+ ' Welcome to the SCSU Computer Science Club!' ;
 
 </script>
   {% if (current_user.role=='admin') %}
 
     <form action="" method="post" novalidate>
-      <button type="submit" name="ban_button" value={{user.id}}>Ban</button>
+      <button type="submit" name="ban_button" value={{posts.user_id}}>Ban</button>
       <input type="hidden" name="action" value="banuser">
     </form>
     <form action="" method="post" novalidate>
-      <button type="submit" name="delete_button" value={{user.id}}>Delete Account</button>
+      <button type="submit" name="delete_button" value={{posts.user_id}}>Delete Account</button>
       <input type="hidden" name="action" value="deleteuser">
     </form>
   {% endif %}
 
-  {% for post in posts %}
-    <p>{{post.post_content}}</p>
-  {% endfor %}
+<div class="container" style="background-color:#8c8c8c;width:525px;padding-top:10px;padding-bottom:1px;padding-right:">
+  <div class="container" style="background-color:silver;width:500px;text-align:center;">
+    {% for post in posts %}
+      <a href="/forums/{{post.id}}/{{post.topic_name}}" style="font-size:18px;">{{post.topic_name}}</a>
+      <p style="word-wrap:break-word;font-size:14px;">{{post.post_content}}</p>
+      <p style="font-size:14px;">{{post.date}}</p>
+      <hr>
+    {% endfor %}
+  </div>
+</div>
+
 </body>
 {% endblock %}
