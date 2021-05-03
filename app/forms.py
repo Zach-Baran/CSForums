@@ -28,7 +28,7 @@ class createTopic(FlaskForm):
 class createEvent(FlaskForm):
     event_name = StringField('Event Name:', validators=[DataRequired(message='Event name is required')])
     description = StringField('Description:', validators=[DataRequired(message='Description is required')])
-    event_date = StringField('Event Date:', validators=[DataRequired(message='Event date is required')])
+    event_date = DateTimeLocalField('Event Date:', format='%Y-%m-%dT%H:%M', validators=[DataRequired(message='Event date is required')])
     submit = SubmitField('Create Event')
 
 
@@ -71,4 +71,3 @@ class emailAnnouncement(FlaskForm):
     topic = StringField('Email Topic:', validators=[DataRequired(message='Topic is required')])
     message = StringField('Message:', validators=[DataRequired(message='Message is required')])
     submit = SubmitField('Send Emails')
-

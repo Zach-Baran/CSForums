@@ -72,7 +72,7 @@ class Events(db.Model):
     __tablename__ = 'events'
     id = db.Column(db.Integer, primary_key=True)
     event_name = db.Column(db.String(64), nullable=False)
-    event_date = db.Column(db.String(16), nullable=False)
+    event_date = db.Column(db.DateTime, nullable=False)
     description = db.Column(db.String(500), unique=False, nullable=True)
     event_content = db.Column(db.String(255), unique=False)
 

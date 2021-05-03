@@ -40,12 +40,12 @@
 
 
     <form action="" method="post" novalidate>
-      <button type="submit" name="change-email-button" value={{user.id}}>Change Email</button>
+      <button type="submit" name="change-email-button" value={{current_user.id}}>Change Email</button>
       <input type="hidden" name="action" value="change-email">
     </form>
 
      <form action="" method="post" novalidate>
-      <button type="submit" name="change-password-button" value={{user.id}}>Change Password</button>
+      <button type="submit" name="change-password-button" value={{current_user.id}}>Change Password</button>
       <input type="hidden" name="action" value="change-password">
     </form>
 

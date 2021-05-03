@@ -1,17 +1,13 @@
-
 import flask_login
-
 from app import app, db, mail
 from app.models import User, Forums, Events, Post, Career, RegisterRequest
 from flask import Flask, render_template, redirect, url_for, flash, request, abort, session
 from flask_login import login_user, logout_user, login_required, current_user
-
 from app.forms import CreateUser, LoginUser, createTopic, createEvent, createPost, createCareer, memberRequest, emailAnnouncement, \
     resetPassword, forgotPassword, changeEmail, changePassword
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_mail import Mail, Message
 from threading import Thread
-
 import sys
 import datetime
 
@@ -229,7 +225,7 @@ def createcareer():
 
             jobs = Career(job_name=form.job_name.data, job_date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),applyBy_date=form.applyBy_date.data,
                          description=form.description.data)
-            
+
             db.session.add(jobs)
             db.session.commit()
             form.job_name.data = ''
@@ -352,4 +348,3 @@ def change_password():
 @app.errorhandler(404)
 def errorpage(e):
     return render_template('404.html'),404
-
