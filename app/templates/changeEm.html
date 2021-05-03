@@ -1,13 +1,16 @@
-{% extends "base.html" %}
-
 {% block content %}
-    <form action="" method="post" novalidate>
+    <form action="" method="post">
         {{form.hidden_tag()}}
-        <h1>Membership Request Page</h1>
-        <h2>Enter in your email to be sent for verification. Admin will provide a sign up code  once verified.</h2>
+        <h1>Change Email</h1>
+        <h2>Enter in the new email down below.</h2>
         <p>
             {{form.email.label}}<br>
             {{form.email(size=64)}}
+        </p>
+
+        <p>
+            {{form.confirmEm.label}}<br>
+            {{form.confirmEm(size=64)}}
         </p>
         <p>{{form.submit()}}</p>
     </form>

@@ -1,16 +1,19 @@
+
+import flask_login
+
 from app import app, db, mail
 from app.models import User, Forums, Events, Post, Career, RegisterRequest
 from flask import Flask, render_template, redirect, url_for, flash, request, abort, session
 from flask_login import login_user, logout_user, login_required, current_user
-from app.forms import CreateUser, LoginUser, createTopic, createEvent, createPost, createCareer, memberRequest, emailAnnouncement
+
+from app.forms import CreateUser, LoginUser, createTopic, createEvent, createPost, createCareer, memberRequest, emailAnnouncement, \
+    resetPassword, forgotPassword, changeEmail, changePassword
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_mail import Mail, Message
 from threading import Thread
+
 import sys
 import datetime
-
-
-
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -134,6 +137,7 @@ def post(topicID, topicName):
 # Dynamic user route, displays a profile given a unique first name
 @app.route('/profile/<user>', methods=['GET', 'POST'])
 def profile(user):
+
     if current_user.role != 'banned':
         if request.method == 'POST':  # if admin clicked ban or delete button
             if request.form['action'] == 'banuser':
@@ -142,6 +146,10 @@ def profile(user):
             elif request.form['action'] == 'deleteuser':
                 db.engine.execute('DELETE FROM users WHERE id = {};'.format(request.form.get("delete_button")))
                 return 'Account Deleted'
+            elif request.form['action'] == 'change-email':
+                return redirect(url_for('change_email'))
+            elif request.form['action'] == 'change-password':
+                return redirect(url_for('change_password'))
         if request.method == 'GET':  # if user is viewing profile
             if current_user.is_authenticated:
                 posts = db.engine.execute('SELECT post.post_content,post.date, forums.topic_name, forums.id, post.username FROM \
@@ -212,13 +220,16 @@ def events():
     all = db.session.query(Events).all()
     return render_template('view_events.html', events=all)
 
+
 @app.route('/createcareer', methods=['GET', 'POST'])
 def createcareer():
     if current_user.role=='admin':
         form = createCareer()
         if form.validate_on_submit():
+
             jobs = Career(job_name=form.job_name.data, job_date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),applyBy_date=form.applyBy_date.data,
                          description=form.description.data)
+            
             db.session.add(jobs)
             db.session.commit()
             form.job_name.data = ''
@@ -228,21 +239,26 @@ def createcareer():
     else:
         abort(404)
 
+
 @app.route('/career')
 def career():
-        all = db.session.query(Career).all()
 
-        return render_template('view_career.html', job=all)
+      all = db.session.query(Career).all()
+      return render_template('view_career.html', job=all)
+
 
 @app.route('/member_req', methods=['GET', 'POST'])
 def member_req():
     form = memberRequest()
     if form.validate_on_submit():
-        req = RegisterRequest(email=form.email.data)
+        req = RegisterRequest(email=form.email.data, email_conf=0, admin_code=None)
         db.session.add(req)
         db.session.commit()
         form.email.data = ''
+        flash('E-mail sent for verification')
+        return redirect('member_req')
     return render_template('memreq.html', form=form)
+
 
 @app.route('/userauth')
 def userauth():
@@ -255,6 +271,85 @@ def userauth():
             return redirect(url_for('home'))
 
 
+
+def reset_email(user):
+    token = user.pw_reset_token()
+    resetMSG = Message('Password Reset', sender='csc330emaildisposable@gmail.com', recipients=[user.email])
+    resetMSG.body = f'''Password Reset Link : {url_for('reset_password', token=token, _external=True)}'''
+    mail.send(resetMSG)
+
+
+@app.route('/reset_password', methods=['GET', 'POST'])
+def forgot_password():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    form = forgotPassword()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        reset_email(user)
+        form.email.data = ''
+        flash('Reset link sent for resetting the password')
+        return redirect(url_for('login'))
+    return render_template('forgot_request.html', form=form)
+
+
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    user = User.verify_token(token)
+    if user is None:
+        flash('Expired or Invalid token')
+        return redirect(url_for('reset_password'))
+    form = resetPassword()
+    if form.validate_on_submit():
+        if form.password.data == form.confirmPw.data:
+            user.password_hash = generate_password_hash(form.password.data)
+            db.session.commit()
+            flash('Your password is updated')
+            return redirect(url_for('login'))
+        else:
+            flash('Make sure the Passwords in both fields match')
+    return render_template('reset_password.html', form=form)
+
+
+@app.route('/change_email', methods=['GET', 'POST'])
+def change_email():
+    form = changeEmail()
+    if current_user.is_authenticated:
+        if form.validate_on_submit():
+            if form.email.data == form.confirmEm.data:
+                current_user.email = form.email.data
+                db.session.commit()
+                form.email.data = ''
+                form.confirmEm.data = ''
+                flash('Email Changed')
+            else:
+                flash('Make sure the E-mails in both fields match')
+        return render_template('changeEm.html', form=form)
+    else:
+        return redirect(url_for('login'))
+
+@app.route('/change_password', methods=['GET', 'POST'])
+def change_password():
+    form = changePassword()
+    if current_user.is_authenticated:
+        if form.validate_on_submit():
+            if not check_password_hash(current_user.password_hash, form.previousPW.data):
+                flash('Make sure the Old password is entered in correctly')
+            else:
+                if form.newPW.data == form.confirmPW.data:
+                    current_user.password_hash = generate_password_hash(form.confirmPW.data)
+                    db.session.commit()
+                    flask_login.logout_user()
+                    return redirect(url_for('login'))
+                else:
+                    flash('Make sure the re-entered password matches the new password')
+        return render_template('changePw.html', form=form)
+    else:
+        return redirect(url_for('login'))
+
 @app.errorhandler(404)
 def errorpage(e):
     return render_template('404.html'),404
+
