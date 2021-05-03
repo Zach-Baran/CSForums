@@ -1,4 +1,5 @@
 from app import db
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask_login import UserMixin
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
@@ -12,6 +13,19 @@ class User(db.Model, UserMixin):
     code = db.Column(db.Integer, unique=False)
     #forums = db.relationship('Forums', backref='users', lazy='dynamic')
     post = db.relationship('Post', backref='users', lazy='dynamic')
+
+    def pw_reset_token(self, expires_time_sec=120):
+        tokenSer = Serializer('fantasticfour', expires_time_sec)
+        return tokenSer.dumps({'userID': self.id}).decode('utf-8')
+
+    @staticmethod
+    def verify_token(token):
+        tokenSer = Serializer('fantasticfour')
+        try:
+            user_ID = tokenSer.loads(token)['userID']
+        except:
+            return None
+        return User.query.get(user_ID)
 
     def __repr__(self):
         return self.email + ': ' + self.role + ':' + self.first_name + ':' + self.last_name
@@ -91,6 +105,7 @@ class RegisterRequest(db.Model):
     __tablename__ = 'regrequest'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(64), unique=True, nullable=False)
+    email_conf = db.Column(db.Integer, unique=False, nullable=False)
     admin_code = db.Column(db.String(64), unique=True, nullable=True)
 
     def __repr__(self):

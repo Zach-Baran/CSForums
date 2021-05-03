@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, SubmitField, TextField, PasswordField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, EqualTo
 
 
 class LoginUser(FlaskForm):
@@ -45,3 +45,24 @@ class createCareer(FlaskForm):
 class memberRequest(FlaskForm):
     email = StringField('Email:', validators=[DataRequired()])
     submit = SubmitField('Submit')
+
+class forgotPassword(FlaskForm):
+    email = StringField('Email:', validators=[DataRequired()])
+    submit = SubmitField('Request Password Reset')
+
+class resetPassword(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired()])
+    confirmPw = PasswordField('Re-enter password', validators=[DataRequired()])
+    submit = SubmitField('Reset Password')
+
+class changeEmail(FlaskForm):
+    email = StringField('New Email:', validators=[DataRequired()])
+    confirmEm = StringField('Re-enter Email:', validators=[DataRequired()])
+    submit = SubmitField('Change Email')
+
+class changePassword(FlaskForm):
+    previousPW = PasswordField('Enter in Old Password:', validators=[DataRequired()])
+    newPW = PasswordField('Enter in New Password:', validators=[DataRequired()])
+    confirmPW = PasswordField('Re-enter New Password:', validators=[DataRequired()])
+    submit = SubmitField('Change Password')
+

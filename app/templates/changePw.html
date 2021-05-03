@@ -1,0 +1,27 @@
+{% block content %}
+    <form action="" method="post">
+        {{form.hidden_tag()}}
+        <h1>Change Password</h1>
+        <h2>Enter in the new password down below.</h2>
+        <p>
+            {{form.previousPW.label}}<br>
+            {{form.previousPW(size=64)}}
+        </p>
+
+        <p>
+            {{form.newPW.label}}<br>
+            {{form.newPW(size=64)}}
+        </p>
+
+        <p>
+            {{form.confirmPW.label}}<br>
+            {{form.confirmPW(size=64)}}
+        </p>
+        <p>{{form.submit()}}</p>
+    </form>
+
+     {% for msg in get_flashed_messages() %}
+      <h1>{{ msg }}</h1>
+      {% endfor %}
+
+{% endblock %}

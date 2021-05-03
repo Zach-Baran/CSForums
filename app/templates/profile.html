@@ -10,10 +10,22 @@
       <button type="submit" name="ban_button" value={{user.id}}>Ban</button>
       <input type="hidden" name="action" value="banuser">
     </form>
+
     <form action="" method="post" novalidate>
       <button type="submit" name="delete_button" value={{user.id}}>Delete Account</button>
       <input type="hidden" name="action" value="deleteuser">
     </form>
+
   {% endif %}
+
+    <form action="" method="post" novalidate>
+      <button type="submit" name="change-email-button" value={{user.id}}>Change Email</button>
+      <input type="hidden" name="action" value="change-email">
+    </form>
+
+     <form action="" method="post" novalidate>
+      <button type="submit" name="change-password-button" value={{user.id}}>Change Password</button>
+      <input type="hidden" name="action" value="change-password">
+    </form>
 
 {% endblock %}
