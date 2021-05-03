@@ -1,18 +1,15 @@
 {% extends "base.html" %}
-
+{% from "formhelper.html" import render_field %}
 {% block content %}
         <form action="" method="post" novalidate>
         {{form.hidden_tag()}}
         <p>
-            {{form.title.label}}<br>
-            {{form.title(size=32)}}
+            {{render_field(form.title)}}
         </p>
         <p>
-            {{form.description.label}}<br>
-            {{form.description(size=32)}}
+            {{render_field(form.description)}}
         </p>
 
         <p> {{form.submit()}}</p>
         </form>
 {% endblock %}
-

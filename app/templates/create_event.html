@@ -1,27 +1,33 @@
 {% extends "base.html" %}
+{% from "formhelper.html" import render_field %}
 
 {% block content %}
+  
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    {% for message in messages %}
+      <p>{{message}}</p>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
     {% if (current_user.role=='admin') %}
 
         <form action="" method="post" novalidate>
                 {{form.hidden_tag()}}
             <p>
-                {{form.event_name.label}}<br>
-                {{form.event_name(size=32)}}
+                {{render_field(form.event_name)}}
+
             </p>
+
             <p>
-    	        {{form.event_date.label}}<br>
-    	        {{form.event_date(size=32)}}
+    	        {{render_field(form.event_date)}}
             </p>
+
             <p>
-                {{form.description.label}}<br>
-                {{form.description(size=32)}}
+                {{render_field(form.description)}}
             </p>
-            <p>{{form.submit()}}</p>
+            <p>{{form.submit}}</p>
         </form>
 
-    {% else %}
-        <h1>You dont have sufficient role permissions to access this route. You will be redirected to view all events</h1>
         {% endif %}
 {% endblock %}
-

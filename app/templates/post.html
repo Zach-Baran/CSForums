@@ -1,21 +1,30 @@
 {% extends "base.html" %}
-
+{% from "formhelper.html" import render_field %}
 
 {% block content %}
 
   {% for post in posts %}
-  <div>{{post.username}}
+  <div class="container">
+  <div>{{post.username}}</div>
   <div>{{post.date}}</div>
-  <div>{{post.post_content}}</div>
+  <div style="word-wrap:break-word;">{{post.post_content}}</div>
+  </div>
 
   {% endfor %}
 
   <form action="" method="post" novalidate>
     {{form.hidden_tag()}}
     <p>
-      {{form.content.label}}<br>
-      {{form.content(size=52)}}
+      {{render_field(form.content)}}
+
     </p>
     <p>{{form.submit()}}</p>
   </form>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for message in messages %}
+        <p>{{message}}</p>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
 {% endblock %}
