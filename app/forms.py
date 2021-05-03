@@ -38,7 +38,7 @@ class createPost(FlaskForm):
 
 class createCareer(FlaskForm):
     job_name = StringField('Job Name:', validators=[DataRequired(message='Job name is required')])
-    applyBy_date = DateTimeLocalField('Apply By:', format='%Y-%m-%dT%H:%M', validators=[DataRequired(message='Apply by is required')])
+    applyBy_date = StringField('Apply By:', validators=[DataRequired(message='Apply by is required')])
     description = StringField('Description:', validators=[DataRequired(message='Description is required')])
     submit = SubmitField('Create Career')
 

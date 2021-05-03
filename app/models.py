@@ -85,7 +85,7 @@ class Career(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     job_name = db.Column(db.String(64), unique=False, nullable=False,)
     job_date = db.Column(db.DateTime, unique=False, nullable=False)
-    applyBy_date = db.Column(db.DateTime, unique=False, nullable=False)
+    applyBy_date = db.Column(db.String(64), unique=False, nullable=False)
     description = db.Column(db.String(64), unique=False, nullable=False)
 
     def __repr__(self):

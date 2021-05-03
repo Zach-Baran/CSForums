@@ -27,12 +27,12 @@
   {% if (current_user.role=='admin') %}
 
     <form action="" method="post" novalidate>
-      <button type="submit" name="ban_button" value={{posts.user_id}}>Ban</button>
+      <button type="submit" name="ban_button" value={{users.id}}>Ban</button>
       <input type="hidden" name="action" value="banuser">
     </form>
 
     <form action="" method="post" novalidate>
-      <button type="submit" name="delete_button" value={{posts.user_id}}>Delete Account</button>
+      <button type="submit" name="delete_button" value={{users.id}}>Delete Account</button>
       <input type="hidden" name="action" value="deleteuser">
     </form>
 
@@ -40,12 +40,12 @@
 
 
     <form action="" method="post" novalidate>
-      <button type="submit" name="change-email-button" value={{current_user.id}}>Change Email</button>
+      <button type="submit" name="change-email-button" value={{users.id}}>Change Email</button>
       <input type="hidden" name="action" value="change-email">
     </form>
 
      <form action="" method="post" novalidate>
-      <button type="submit" name="change-password-button" value={{current_user.id}}>Change Password</button>
+      <button type="submit" name="change-password-button" value={{users.id}}>Change Password</button>
       <input type="hidden" name="action" value="change-password">
     </form>
 

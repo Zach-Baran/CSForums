@@ -133,7 +133,6 @@ def post(topicID, topicName):
 # Dynamic user route, displays a profile given a unique first name
 @app.route('/profile/<user>', methods=['GET', 'POST'])
 def profile(user):
-
     if current_user.role != 'banned':
         if request.method == 'POST':  # if admin clicked ban or delete button
             if request.form['action'] == 'banuser':
@@ -151,8 +150,9 @@ def profile(user):
                 posts = db.engine.execute('SELECT post.post_content,post.date, forums.topic_name, forums.id, post.username FROM \
                                             post INNER JOIN forums WHERE post.forum_id=forums.id AND post.username="{}" AND post.status="1" \
                                             ORDER BY post.date DESC;'.format(user))
+                users = db.session.query(User).filter_by(username=user).first()
                 if posts != None:
-                    return render_template('profile.html', posts=posts)
+                    return render_template('profile.html', posts=posts, users=users)
                 else:
                     abort(404)
             else:
@@ -222,10 +222,8 @@ def createcareer():
     if current_user.role=='admin':
         form = createCareer()
         if form.validate_on_submit():
-
             jobs = Career(job_name=form.job_name.data, job_date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),applyBy_date=form.applyBy_date.data,
                          description=form.description.data)
-
             db.session.add(jobs)
             db.session.commit()
             form.job_name.data = ''
@@ -238,7 +236,6 @@ def createcareer():
 
 @app.route('/career')
 def career():
-
       all = db.session.query(Career).all()
       return render_template('view_career.html', job=all)
 
