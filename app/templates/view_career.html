@@ -19,17 +19,21 @@
     width:800px;margin:5px;background-color: silver;position:relative; left:300px; top:80px; ">
 
 		<tr>
+            <th>Company Name</th>
 			<th>Job Name</th>
 			<th>Date Posted</th>
-      <th>Apply By </th>
+            <th>Apply By </th>
 			<th>Description</th>
+            <th>Link to Job </th>
 		</tr>
 		{% for career in job %}
 		<tr>
+            <td>{{ career.comp_name }}</td>
 			<td>{{career.job_name}}</td>
 			<td>{{career.job_date}}</td>
       <td>{{career.applyBy_date}}</td>
 			<td>{{career.description}}</td>
+            <td><a href="{{ career.apply_link }}"> {{ career.apply_link }}</a></td>
 		</tr>
 		{% endfor %}
 

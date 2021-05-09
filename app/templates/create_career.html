@@ -6,6 +6,10 @@
         <form action="" method="post" novalidate>
                 {{form.hidden_tag()}}
             <p>
+                {{render_field(form.comp_name)}}
+            </p>
+
+            <p>
                 {{render_field(form.job_name)}}
             </p>
             
@@ -15,6 +19,10 @@
             </p>
             <p>
                 {{render_field(form.description)}}
+            </p>
+
+            <p>
+                {{render_field(form.apply_link)}}
             </p>
             <p>{{form.submit()}}</p>
         </form>
