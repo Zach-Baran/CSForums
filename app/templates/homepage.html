@@ -2,13 +2,15 @@
 
 
     {% block content %}
-    <body>
-    <div style="background: linear-gradient(to right, #e6ffe6, #004D1A) no-repeat 0 0; height:100vh;">
+    <body style="background-color: #e6ffe6">
+    <div>
+        <h1 style="text-align: center ">Welcome to CompSci Hub!</h1>
     </div>
-    </body>
-      {% if (current_user.role=='admin') %}
-        
 
+
+    </body>
+
+      {% if (current_user.role=='admin') %}
 
       {% else %}
 

@@ -4,15 +4,15 @@
 {% block content %}
 
   {% for post in posts %}
-  <div class="container">
-  <div>{{post.username}}</div>
-  <div>{{post.date}}</div>
+  <div class="container" style="background-color:white;width:550px;padding-top:10px;padding-bottom:8px; border-bottom-style: solid; border-bottom-color: #e6ffe6">
+
+      <div> <p>{{post.username}}  {{post.date}} </p></div>
   <div style="word-wrap:break-word;">{{post.post_content}}</div>
   </div>
 
   {% endfor %}
 
-  <form action="" method="post" novalidate>
+  <form action="" method="post" novalidate class="container" style="text-align: center">
     {{form.hidden_tag()}}
     <p>
       {{render_field(form.content)}}

@@ -2,7 +2,7 @@
 {% from "formhelper.html" import render_field %}
 
 {% block content %}
-  
+    <div class="container" style="text-align: center">
 {% with messages = get_flashed_messages() %}
   {% if messages %}
     {% for message in messages %}
@@ -12,9 +12,9 @@
 {% endwith %}
     {% if (current_user.role=='admin') %}
 
-        <form action="" method="post" novalidate>
+        <form action="" method="post" novalidate style="text-align: center">
                 {{form.hidden_tag()}}
-            <p>
+            <p style="text-align: center">
                 {{render_field(form.event_name)}}
 
             </p>
@@ -31,3 +31,5 @@
 
         {% endif %}
 {% endblock %}
+
+</div>

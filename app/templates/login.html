@@ -4,25 +4,16 @@
 
 
   {% block content %}
-        <body style=" background-color: #e6ffe6;
-
-        ">
-
-    <div>
-        <div style="position: absolute;
-        top: 25%;
+        <body>
 
 
-        left: 0;
-        width: 50%;
-        z-index: 2;
-            ">
+        <div style="text-align: center">
 
-      <form action="" method="post" novalidate  style=" text-align: center; align-items: center;justify-content: center;flex-direction: column;padding: 0 50px;height: 120%;" >
+      <form action="" method="post" novalidate class="container">
 
           {{form.hidden_tag()}}
 
-          <h1>Login</h1>
+          <h2>Login</h2>
           <p>
               {{form.email.label}}<br>
               {{form.email(size=32)}}
@@ -35,34 +26,8 @@
           <p >{{form.submit()}}</p>
           <a href="reset_password">Forgot  password?</a>
       </form>
-      </div>
 
-          <div style="
-
-                background: linear-gradient(to right, #e6ffe6, #004D1A) no-repeat 0 0;
-
-                height:100vh;
-
-                ">
-
-				    <div style="position: absolute;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        flex-direction: column;
-                        padding: 0 40px;
-                        text-align: center;
-                        top: 0;
-                        height: 100%;
-                        width: 50%;
-                        right: 0;
-                                    ">
-					<h1 style="font-size: 20px">Computer Science Club</h1>
-					<p style="font-size: 20px">Southern Connecticut State University </p>
-				</div>
-			</div>
-		</div>
-
+        </div>
 
 
     {% endblock %}
