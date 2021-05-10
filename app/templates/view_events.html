@@ -17,13 +17,18 @@
 {% for row in events|batch(2) %}
 <div class="row" style="width:90%;background-color:#e6ffe6;">
 	{% for event in row %}
-    <div class="col-sm" style="border:1px solid black;text-align:center; background-color: white;
+
+    
+
+    {% if event.event_date > time %}
+   <div class="col-sm" style="border:1px solid black;text-align:center; background-color: white;
     width:100px;margin:7px;">{{event.event_name}}
+
 			<div>{{event.event_date}}</div>
 			<br>
 			<div style="word-wrap:break-word;">{{event.description}}</div>
 		</div>
-
+    {% endif %}
 
 	{% endfor %}
 	</div>
