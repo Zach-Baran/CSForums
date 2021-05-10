@@ -14,11 +14,9 @@ import datetime
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    if current_user.is_authenticated:
-        events = db.engine.execute("SELECT event_name, event_date, description FROM events ORDER BY event_date DESC LIMIT 2")
-        return render_template('homepage.html', events=events)
-    else:
-        return render_template('homepage.html')
+    events = db.engine.execute("SELECT event_name, event_date, description FROM events ORDER BY event_date DESC LIMIT 2")
+    return render_template('homepage.html', events=events)
+
 
 
 @app.route('/register', methods=['GET', 'POST'])
