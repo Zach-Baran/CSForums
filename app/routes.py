@@ -15,7 +15,8 @@ import datetime
 @app.route('/', methods=['GET', 'POST'])
 def home():
     if current_user.is_authenticated:
-        return render_template('homepage.html', users=db.session.query(User).all())
+        events = db.engine.execute("SELECT event_name, event_date, description FROM events ORDER BY event_date DESC LIMIT 2")
+        return render_template('homepage.html', events=events)
     else:
         return render_template('homepage.html')
 
@@ -137,10 +138,10 @@ def profile(user):
         if request.method == 'POST':  # if admin clicked ban or delete button
             if request.form['action'] == 'banuser':
                 db.engine.execute('UPDATE users SET role = "banned" WHERE id = {};'.format(request.form.get("ban_button")))
-                return '{}'.format(request.form.get("ban_button"))
+                return redirect(url_for('home'))
             elif request.form['action'] == 'deleteuser':
                 db.engine.execute('DELETE FROM users WHERE id = {};'.format(request.form.get("delete_button")))
-                return 'Account Deleted'
+                return redirect(url_for('home'))
             elif request.form['action'] == 'change-email':
                 return redirect(url_for('change_email'))
             elif request.form['action'] == 'change-password':
@@ -150,9 +151,10 @@ def profile(user):
                 posts = db.engine.execute('SELECT post.post_content,post.date, forums.topic_name, forums.id, post.username FROM \
                                             post INNER JOIN forums WHERE post.forum_id=forums.id AND post.username="{}" AND post.status="1" \
                                             ORDER BY post.date DESC;'.format(user))
-                users = db.session.query(User).filter_by(username=user).first()
-                if posts != None:
-                    return render_template('profile.html', posts=posts, users=users)
+                valid = db.session.query(User).filter_by(username=user).first()
+                if posts != None and valid != None:
+                    print(user)
+                    return render_template('profile.html', posts=posts, user=valid)
                 else:
                     abort(404)
             else:
@@ -214,7 +216,8 @@ def createevents():
 @app.route('/events')
 def events():
     all = db.session.query(Events).all()
-    return render_template('view_events.html', events=all)
+    time = datetime.datetime.now()
+    return render_template('view_events.html', events=all, time=time)
 
 
 @app.route('/createcareer', methods=['GET', 'POST'])
