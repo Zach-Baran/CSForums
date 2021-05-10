@@ -11,7 +11,7 @@
   {% endif %}
 {% endwith %}
     {% if (current_user.role=='admin') %}
-
+        <h2 style="text-align: center">Create Event</h2>
         <form action="" method="post" novalidate style="text-align: center">
                 {{form.hidden_tag()}}
             <p style="text-align: center">

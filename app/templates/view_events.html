@@ -12,14 +12,14 @@
 </style>
 <h2 style="text-align:center">Upcoming Events</h2>
 
-<div class="container" style="margin-bottom:30px;">
+<div class="container" style="margin-bottom:30px; padding-left: 100px">
 
 {% for row in events|batch(2) %}
 <div class="row" style="width:90%;background-color:#e6ffe6;">
 	{% for event in row %}
 
     {% if event.event_date > time %}
-   <div class="col-sm" style="border:1px solid black;text-align:center; background-color: white;width:100px;margin:7px;">{{event.event_name}}
+   <div class="col-sm" style="border-radius: 25px;border:1px solid black;text-align:center; background-color: white;width:100px;margin:7px;">{{event.event_name}}
 
 			<div>{{event.event_date}}</div>
 			<br>
