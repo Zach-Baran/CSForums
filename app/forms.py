@@ -1,6 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, SubmitField, TextField, PasswordField
-
+from wtforms import StringField, IntegerField, SubmitField, TextField, PasswordField, TextAreaField
 from wtforms.fields.html5 import DateTimeLocalField
 from wtforms.validators import DataRequired, Email, EqualTo
 
@@ -21,19 +20,19 @@ class CreateUser(FlaskForm):
 
 class createTopic(FlaskForm):
     title = StringField('Title:', validators=[DataRequired(message='Title is required')])
-    description = StringField('Description:', validators=[DataRequired(message='Description is required')])
+    description = TextAreaField('Description:', validators=[DataRequired(message='Description is required')], render_kw={'rows':5, 'cols':35})
     submit = SubmitField('Create Topic')
 
 
 class createEvent(FlaskForm):
     event_name = StringField('Event Name:', validators=[DataRequired(message='Event name is required')])
-    description = StringField('Description:', validators=[DataRequired(message='Description is required')])
+    description = TextAreaField('Description:', validators=[DataRequired(message='Description is required')], render_kw={'rows':5, 'cols':35})
     event_date = DateTimeLocalField('Event Date:', format='%Y-%m-%dT%H:%M', validators=[DataRequired(message='Event date is required')])
     submit = SubmitField('Create Event')
 
 
 class createPost(FlaskForm):
-    content = StringField('Content:', validators=[DataRequired(message='Content is required')])
+    content = TextAreaField('Content:', validators=[DataRequired(message='Content is required')], render_kw={'rows':5, 'cols':60})
     submit = SubmitField('Post')
 
 class createCareer(FlaskForm):
@@ -71,5 +70,5 @@ class changePassword(FlaskForm):
 
 class emailAnnouncement(FlaskForm):
     topic = StringField('Email Topic:', validators=[DataRequired(message='Topic is required')])
-    message = StringField('Message:', validators=[DataRequired(message='Message is required')])
+    message = TextAreaField('Message:', validators=[DataRequired(message='Message is required')], render_kw={'rows':5, 'cols':35})
     submit = SubmitField('Send Emails')
