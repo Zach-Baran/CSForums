@@ -2,28 +2,29 @@
 
     {% block content %}
 
-    <body style="background-color: #e6ffe6">
+    <body style="background-color: #e6ffe6;">
     <div>
         <h1 style="text-align: center ">Welcome to CompSci Hub!</h1>
     </div>
 
-    <div class="container" style="position:relative;top:70%;">
 
-    <div class="row" style="width:90%;background-color:#e6ffe6;">
-    	{% for event in events %}
+    <div class="container" style="height:100vh;">
+      <div class="container" style="position:relative;top:65%;">
+        <div class="row" style="width:90%;background-color:#e6ffe6;">
+        	{% for event in events %}
 
-        <div class="col-sm" style="border:1px solid black;text-align:center; background-color: white;width:100px;margin:7px;">{{event.event_name}}
+            <div class="col-sm" style="border:1px solid black;text-align:center; background-color: white;width:100px;margin:7px;">{{event.event_name}}
 
 
-    			<div>{{event.event_date}}</div>
-    			<br>
-    			  <div style="word-wrap:break-word;">{{event.description}}</div>
-        </div>
+        			<div>{{event.event_date}}</div>
+        			<br>
+        			  <div style="word-wrap:break-word;">{{event.description}}</div>
+            </div>
 
-    	{% endfor %}
-    	  </div>
+        	{% endfor %}
+        	  </div>
 
+      </div>
     </div>
-
     </body>
     {% endblock %}
