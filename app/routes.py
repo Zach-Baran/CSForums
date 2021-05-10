@@ -136,10 +136,13 @@ def profile(user):
         if request.method == 'POST':  # if admin clicked ban or delete button
             if request.form['action'] == 'banuser':
                 db.engine.execute('UPDATE users SET role = "banned" WHERE id = {};'.format(request.form.get("ban_button")))
-                return redirect(url_for('home'))
+                return redirect(request.url)
             elif request.form['action'] == 'deleteuser':
                 db.engine.execute('DELETE FROM users WHERE id = {};'.format(request.form.get("delete_button")))
-                return redirect(url_for('home'))
+                return redirect(request.url)
+            elif request.form['action'] == 'unbanuser':
+                db.engine.execute('UPDATE users SET role = "Member" WHERE id = {};'.format(request.form.get("unban_button")))
+                return redirect(request.url)
             elif request.form['action'] == 'change-email':
                 return redirect(url_for('change_email'))
             elif request.form['action'] == 'change-password':

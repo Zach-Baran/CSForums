@@ -23,16 +23,23 @@
 </script>
 
   {% if (current_user.role=='admin') %}
-
+    {% if user.role != 'banned' %}
     <form action="" method="post" novalidate>
       <button type="submit" name="ban_button" value={{user.id}}>Ban</button>
       <input type="hidden" name="action" value="banuser">
     </form>
+    {% else %}
+    <form action="" method="post" novalidate>
+      <button type="submit" name="unban_button" value={{user.id}}>Unban</button>
+      <input type="hidden" name="action" value="unbanuser">
+    </form>
+    {% endif %}
 
     <form action="" method="post" novalidate>
       <button type="submit" name="delete_button" value={{user.id}}>Delete Account</button>
       <input type="hidden" name="action" value="deleteuser">
     </form>
+
 
   {% endif %}
 
