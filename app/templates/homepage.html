@@ -7,13 +7,25 @@
         <h1 style="text-align: center ">Welcome to CompSci Hub!</h1>
     </div>
 
+    <p class="container" style="line-height: center; text-align: center; padding-top: 50px; padding-left: 100px;padding-right: 100px">
+        The Computer Science Club provides a unique and fun environment
+        for people interested in learning about new technology, programming,
+        or any aspect of the digital world. The club is aimed not only at
+        computer science majors, but at any student who has an interest
+        in learning more about computer-based technology. Our meetings
+        will include various activities such as group projects,
+        competitive events, and lectures from professionals. We will
+        strive to make every meeting not only informative and engaging,
+        but entertaining as well.</p>
 
-    <div class="container" style="height:100vh;">
-      <div class="container" style="position:relative;top:65%;">
-        <div class="row" style="width:90%;background-color:#e6ffe6;">
+
+    <div class="container" style="padding-left: 100px; padding-right: 100px">
+      <div class="container" style="position:absolute;top:75%;">
+      <h3>Featured Events: </h3>
+        <div class="row" style="width:80%;background-color:#e6ffe6; text-align: center">
         	{% for event in events %}
 
-            <div class="col-sm" style="border:1px solid black;text-align:center; background-color: white;width:100px;margin:7px;">{{event.event_name}}
+            <div class="col-sm" style="border:1px solid black;border-radius:25px;text-align:center; background-color: white;width:100px;margin:10px;">{{event.event_name}}
 
 
         			<div>{{event.event_date}}</div>
