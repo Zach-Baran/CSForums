@@ -225,13 +225,15 @@ def createcareer():
     if current_user.role=='admin':
         form = createCareer()
         if form.validate_on_submit():
-            jobs = Career(job_name=form.job_name.data, job_date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),applyBy_date=form.applyBy_date.data,
-                         description=form.description.data)
+            jobs = Career(comp_name=form.comp_name.data, job_name=form.job_name.data, job_date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),applyBy_date=form.applyBy_date.data,
+                         description=form.description.data, apply_link=form.apply_link.data)
             db.session.add(jobs)
             db.session.commit()
+            form.comp_name.data = ''
             form.job_name.data = ''
             form.applyBy_date.data = ''
             form.description.data = ''
+            form.apply_link.data = ''
         return render_template('create_career.html', form=form)
     else:
         abort(404)
