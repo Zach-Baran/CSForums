@@ -1,12 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-<body style=" background-image:url('https://promises2keep.files.wordpress.com/2017/10/scsu.png');
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-size: cover;">
+<body>
 
-  <h1 id="e" style="font-size: 20px"> {{posts.username}}</h1>
+  <h1 id="e" style="font-size: 20px; text-align: center" > {{posts.username}}</h1>
     <script>
      myDate = new Date();
      hrs = myDate.getHours();
@@ -21,9 +18,10 @@
         x = 'Good Evening';
 
     document.getElementById('e').innerHTML =
-        '<b>' + x + '<h1 id="e" style="font-size: 20px"> {{posts.username}}</h1> '+ ' Welcome to the SCSU Computer Science Club!' ;
+        '<b>' + x + '<h2 id="e" style="font-size: 20px"> {{posts.username}}</h2> '+ ' Profile options' ;
 
 </script>
+  <div class="container" style="text-align: center">
   {% if (current_user.role=='admin') %}
 
     <form action="" method="post" novalidate>
@@ -48,11 +46,18 @@
       <button type="submit" name="change-password-button" value={{current_user.id}}>Change Password</button>
       <input type="hidden" name="action" value="change-password">
     </form>
+
+  </div>
+
+
+
   {% endif %}
 
 {% if posts.rowcount > 0 %}
-<div class="container" style="background-color:#8c8c8c;width:525px;padding-top:10px;padding-bottom:1px;padding-right:">
-  <div class="container" style="background-color:silver;width:500px;text-align:center;">
+<div class="container" style="background-color:#e6ffe6;width:525px;padding-top:10px;padding-bottom:1px;padding-right:10px">
+    <h3 style="text-align: center"> Posts </h3>
+  <div class="container" style="background-color:white;width:500px;text-align:center;">
+
     {% for post in posts %}
       <a href="/forums/{{post.id}}/{{post.topic_name}}" style="font-size:18px;">{{post.topic_name}}</a>
       <p style="word-wrap:break-word;font-size:14px;">{{post.post_content}}</p>

@@ -9,6 +9,7 @@
     {% endfor %}
   {% endif %}
 {% endwith %}
+    <div class="container" style="text-align: center">
 <form action="" method="post" novalidate>
         {{form.hidden_tag()}}
     <p>
@@ -22,6 +23,6 @@
 
     <p>{{form.submit}}</p>
 </form>
-
+    </div>
 
 {% endblock %}

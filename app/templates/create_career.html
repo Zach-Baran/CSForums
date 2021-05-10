@@ -3,7 +3,7 @@
 {% block content %}
     {% if (current_user.role=='admin') %}
 
-        <form action="" method="post" novalidate>
+        <form action="" method="post" novalidate class="container" style="text-align: center">
                 {{form.hidden_tag()}}
             <p>
                 {{render_field(form.comp_name)}}
