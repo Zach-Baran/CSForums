@@ -3,7 +3,7 @@
 {% block content %}
 <body>
 
-  <h1 id="e" style="font-size: 20px; text-align: center" > {{posts.username}}</h1>
+  <h1 id="e" style="font-size: 20px;" > {{posts.username}}</h1>
     <script>
      myDate = new Date();
      hrs = myDate.getHours();
@@ -21,7 +21,7 @@
         '<b>' + x + '<h2 id="e" style="font-size: 20px"> {{posts.username}}</h2> '+ ' Profile options' ;
 
 </script>
-  <div class="container" style="text-align: center">
+
   {% if (current_user.role=='admin') %}
 
     <form action="" method="post" novalidate>
@@ -47,14 +47,13 @@
       <input type="hidden" name="action" value="change-password">
     </form>
 
-  </div>
-
 
 
   {% endif %}
 
 {% if posts.rowcount > 0 %}
-<div class="container" style="background-color:#e6ffe6;width:525px;padding-top:10px;padding-bottom:1px;padding-right:10px">
+<div class="container" style="position:relative;">
+<div class="container" style="background-color:#e6ffe6;padding-top:10px;padding-bottom:1px;padding-right:10px;">
     <h3 style="text-align: center"> Posts </h3>
   <div class="container" style="background-color:white;width:500px;text-align:center;">
 
@@ -67,6 +66,7 @@
   </div>
 </div>
 {% endif %}
+</div>
 </body>
 
 {% endblock %}
