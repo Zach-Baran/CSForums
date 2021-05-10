@@ -5,7 +5,7 @@
 
   {% for post in posts %}
   <div class="container">
-  <div>{{post.username}}</div>
+  <a href="/profile/{{post.username}}">{{post.username}}</a>
   <div>{{post.date}}</div>
   <div style="word-wrap:break-word;">{{post.post_content}}</div>
   </div>
