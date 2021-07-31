@@ -2,3 +2,7 @@
 __pycache__/
 app/__init__.py
 app/__init__.pyc
+migrations/
+app/static/
+app/test.py
+app/testapi.py

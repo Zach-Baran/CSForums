@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, SubmitField, TextField, PasswordField, TextAreaField
+from wtforms import StringField, IntegerField, SubmitField, TextField, PasswordField, TextAreaField, FileField
 from wtforms.fields.html5 import DateTimeLocalField
 from wtforms.validators import DataRequired, Email, EqualTo
 
@@ -72,3 +72,7 @@ class emailAnnouncement(FlaskForm):
     topic = StringField('Email Topic:', validators=[DataRequired(message='Topic is required')])
     message = TextAreaField('Message:', validators=[DataRequired(message='Message is required')], render_kw={'rows':5, 'cols':35})
     submit = SubmitField('Send Emails')
+class mediaform(FlaskForm):
+    file = FileField(validators=[DataRequired()])
+    #name = StringField('Title:', validators=[DataRequired(message='Media name is required')])
+    submit = SubmitField('Upload')

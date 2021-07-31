@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% from "formhelper.html" import render_field %}
+{% block content %}
+
+<h1>Upload</h1>
+
+<form action="/media" method="POST" enctype="multipart/form-data">
+  <!-- <div class="custom-file">
+  <input type="file" class="custom-file-input" name="media" id="customFile">
+  <label class="custom-file-label" for="customFile">Choose file</label>
+</div>
+<button class="btn btn-primary">Upload</button> -->
+  {{form.hidden_tag()}}
+  <div class="custom-file">
+    {{render_field(form.file)}}
+
+
+  </div>
+
+  {{form.submit}}
+</form>
+
+
+
+  {% for image in images %}
+
+    <p>{{image.title}}</p>
+    <img src="{{url_for('static', filename=image.title)}}">
+  {% endfor %}
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <script>
+      var messages = {{ messages | safe }};
+      for (var i=0; i<messages.length; i++)
+      {
+        alert(messages[i]);
+      }
+    </script>
+
+    {% endif %}
+  {% endwith %}
+{% endblock %}

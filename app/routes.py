@@ -1,20 +1,24 @@
 import flask_login
+import app.testapi
+from app.checkfile import checkfile
 from app import app, db, mail
-from app.models import User, Forums, Events, Post, Career, RegisterRequest
+from app.models import User, Forums, Events, Post, Career, RegisterRequest, userfiles
 from flask import Flask, render_template, redirect, url_for, flash, request, abort, session
-from flask_login import login_user, logout_user, login_required, current_user
+from flask_login import login_user, logout_user, login_required, current_user, LoginManager
 from app.forms import CreateUser, LoginUser, createTopic, createEvent, createPost, createCareer, memberRequest, emailAnnouncement, \
-    resetPassword, forgotPassword, changeEmail, changePassword
+    resetPassword, forgotPassword, changeEmail, changePassword, mediaform
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
+from werkzeug.exceptions import RequestEntityTooLarge
 from flask_mail import Mail, Message
 from threading import Thread
-import sys
-import datetime
+import sys, os, datetime
 
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
     events = db.engine.execute("SELECT event_name, event_date, description FROM events ORDER BY event_date DESC LIMIT 2")
+    print(User)
     return render_template('homepage.html', events=events)
 
 
@@ -30,6 +34,7 @@ def register():
                           password_hash=generate_password_hash(form.password.data), role="Member", code=0)
             db.session.add(submit)
             db.session.commit()
+            login_user(submit)
             form.username.data = ''
             form.firstname.data = ''
             form.lastname.data = ''
@@ -127,6 +132,8 @@ def post(topicID, topicName):
             else:
                 flash('Please wait 1 minute before posting again')
                 return render_template('post.html', posts=data, form=form)
+    else:
+        return redirect(url_for('login'))
 
 
 # Dynamic user route, displays a profile given a unique first name
@@ -191,7 +198,9 @@ def sendMassEmail(subject, body):
 # Function handles viewing creating events
 @app.route('/events/createevent/', methods=['GET', 'POST'])
 def createevents():
-    if current_user.role=='admin':
+    if not current_user.is_authenticated:
+        abort(404)
+    elif current_user.role=='admin':
         form = createEvent()
         if form.validate_on_submit():
             event = Events(event_name=form.event_name.data, event_date=form.event_date.data,
@@ -223,7 +232,9 @@ def events():
 
 @app.route('/createcareer', methods=['GET', 'POST'])
 def createcareer():
-    if current_user.role=='admin':
+    if not current_user.is_authenticated:
+        abort(404)
+    elif current_user.role=='admin':
         form = createCareer()
         if form.validate_on_submit():
             jobs = Career(comp_name=form.comp_name.data, job_name=form.job_name.data, job_date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),applyBy_date=form.applyBy_date.data,
@@ -273,7 +284,7 @@ def userauth():
 
 def reset_email(user):
     token = user.pw_reset_token()
-    resetMSG = Message('Password Reset', sender='csc330emaildisposable@gmail.com', recipients=[user.email])
+    resetMSG = Message('Password Reset',  recipients=[user.email])
     resetMSG.body = f'''Password Reset Link : {url_for('reset_password', token=token, _external=True)}'''
     mail.send(resetMSG)
 
@@ -340,7 +351,6 @@ def change_password():
                 if form.newPW.data == form.confirmPW.data:
                     current_user.password_hash = generate_password_hash(form.confirmPW.data)
                     db.session.commit()
-                    flask_login.logout_user()
                     return redirect(url_for('login'))
                 else:
                     flash('Make sure the re-entered password matches the new password')
@@ -348,6 +358,32 @@ def change_password():
     else:
         return redirect(url_for('login'))
 
+@app.route('/media', methods=['GET', 'POST'])
+def media():
+    form = mediaform()
+    images = db.engine.execute('SELECT url, likes, title FROM userfiles;')
+    if request.method == 'POST':
+        if form.file.data:
+            media = form.file.data
+            if not checkfile(media):
+                print("invalid file")
+                flash("invalid file")
+            else:
+                filename = secure_filename(media.filename)
+                media.save(os.path.join(app.config["IMAGE_PATH"], filename))
+                newmedia = userfiles(url=os.path.join(app.config["IMAGE_PATH"], filename), title=filename, likes=0)
+                db.session.add(newmedia)
+                db.session.commit()
+
+            return redirect(url_for('media'))
+    return render_template('media.html', form=form, images=images)
+
+
 @app.errorhandler(404)
 def errorpage(e):
     return render_template('404.html'),404
+
+@app.errorhandler(413)
+def filesize(e):
+    flash("file too large")
+    return redirect(url_for('media'))

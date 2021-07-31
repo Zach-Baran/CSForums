@@ -13,8 +13,8 @@ class User(db.Model, UserMixin):
     code = db.Column(db.Integer, unique=False)
     post = db.relationship('Post', backref='users', lazy='dynamic')
 
-    def pw_reset_token(self, expires_time_sec=120):
-        tokenSer = Serializer('fantasticfour', expires_time_sec)
+    def pw_reset_token(self, expires_time_sec=1000):
+        tokenSer = Serializer(app.config['SECRET_KEY'], expires_time_sec)
         return tokenSer.dumps({'userID': self.id}).decode('utf-8')
 
     @staticmethod
@@ -112,3 +112,13 @@ class RegisterRequest(db.Model):
 
     def __repr__(self):
         return str(self.email) + ': ' + str(self.admin_code)
+
+class userfiles(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    url = db.Column(db.String(64), nullable=True)
+    title = db.Column(db.String(64), nullable=True)
+    likes = db.Column(db.Integer)
+
+
+    def __repr__(self):
+        return f"file(name={name}, likes={likes})"
