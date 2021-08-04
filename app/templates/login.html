@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% from "formhelper.html" import render_field %}
 
 
 
@@ -14,21 +14,27 @@
           {{form.hidden_tag()}}
 
           <h2>Login</h2>
-          <p>
-              {{form.email.label}}<br>
-              {{form.email(size=32)}}
-          </p>
-          <p>
-              {{form.password.label}}<br>
-              {{form.password(size=32)}}
-          </p>
+          <div>
+            
+              {{render_field(form.email)}}
+          </div>
+          <div>
 
-          <p >{{form.submit()}}</p>
+              {{render_field(form.password)}}
+          </div>
+
+          <div>{{form.submit()}}</div>
           <a href="reset_password">Forgot  password?</a>
       </form>
 
         </div>
-
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <p>{{message}}</p>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
 
     {% endblock %}
 

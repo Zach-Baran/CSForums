@@ -36,7 +36,7 @@ class createPost(FlaskForm):
     submit = SubmitField('Post')
 
 class createCareer(FlaskForm):
-    comp_name = StringField('Company Name:', validators=[DataRequired(message='Company name is required')])
+    company = StringField('Company Name:', validators=[DataRequired(message='Company name is required')])
     job_name = StringField('Job Name:', validators=[DataRequired(message='Job name is required')])
     applyBy_date = StringField('Apply By:', validators=[DataRequired(message='Apply by is required')])
     description = StringField('Description:', validators=[DataRequired(message='Description is required')])
@@ -73,6 +73,5 @@ class emailAnnouncement(FlaskForm):
     message = TextAreaField('Message:', validators=[DataRequired(message='Message is required')], render_kw={'rows':5, 'cols':35})
     submit = SubmitField('Send Emails')
 class mediaform(FlaskForm):
-    file = FileField(validators=[DataRequired()])
-    #name = StringField('Title:', validators=[DataRequired(message='Media name is required')])
+    file = FileField(label="", validators=[DataRequired()])
     submit = SubmitField('Upload')

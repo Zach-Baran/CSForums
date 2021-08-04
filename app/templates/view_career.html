@@ -17,12 +17,21 @@
 		{% for career in job %}
 
 		<tr>
-            <td>{{ career.comp_name }}</td>
+            <td>{{ career.company }}</td>
 			<td>{{career.job_name}}</td>
 			<td>{{career.job_date}}</td>
       <td>{{career.applyBy_date}}</td>
 			<td>{{career.description}}</td>
             <td><a href="{{ career.apply_link }}"> {{ career.apply_link }}</a></td>
+      <td>
+        {% if current_user.role=='admin' %}
+        <form action="" method="post" novalidate>
+          <button style="border-radius: 25px;border: #e6ffe6; background-color: lightgrey" name="del_job" value={{career.id}}>Delete</button>
+          <input type="hidden" name="action" value="del_job">
+        </form>
+
+        {% endif %}
+        </td>
 		</tr>
 		{% endfor %}
 

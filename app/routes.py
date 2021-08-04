@@ -3,7 +3,7 @@ import app.testapi
 from app.checkfile import checkfile
 from app import app, db, mail
 from app.models import User, Forums, Events, Post, Career, RegisterRequest, userfiles
-from flask import Flask, render_template, redirect, url_for, flash, request, abort, session
+from flask import Flask, render_template, redirect, url_for, flash, request, abort, session, jsonify
 from flask_login import login_user, logout_user, login_required, current_user, LoginManager
 from app.forms import CreateUser, LoginUser, createTopic, createEvent, createPost, createCareer, memberRequest, emailAnnouncement, \
     resetPassword, forgotPassword, changeEmail, changePassword, mediaform
@@ -18,7 +18,6 @@ import sys, os, datetime
 @app.route('/', methods=['GET', 'POST'])
 def home():
     events = db.engine.execute("SELECT event_name, event_date, description FROM events ORDER BY event_date DESC LIMIT 2")
-    print(User)
     return render_template('homepage.html', events=events)
 
 
@@ -52,6 +51,7 @@ def login():
     if form.validate_on_submit():
         user = db.session.query(User).filter_by(email=form.email.data).first()
         if user == None or check_password_hash(user.password_hash, form.password.data) != True:
+            flash("Invalid email or password")
             return redirect(url_for('login'))
         login_user(user)
         return redirect(url_for('home'))
@@ -114,10 +114,10 @@ def post(topicID, topicName):
         form = createPost()
         data = db.engine.execute('SELECT * FROM post WHERE forum_id = {};'.format(topicID))
         if request.method == 'GET':  # Display posts under the topic and allow user to post
-            return render_template('post.html', posts=data, form=form)
+            return render_template('post.html', posts=data, form=form, topicName=topicName)
         if request.method == 'POST':  # When user submits post
             #Check if user has posted within the past 60 seconds
-            if postWait()==None or postWait() > 60:
+            if postWait()==None or postWait() > 60 or current_user.role=='admin':
                 if form.validate_on_submit():
                     post = Post(username=current_user.username, user_id=current_user.id,
                                 date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), \
@@ -128,10 +128,10 @@ def post(topicID, topicName):
                     form.content.data = ''
                     return redirect(url_for('post', topicID=topicID, topicName=topicName))
                 else:
-                    return render_template('post.html', posts=data, form=form)
+                    return render_template('post.html', posts=data, form=form, topicName=topicName)
             else:
                 flash('Please wait 1 minute before posting again')
-                return render_template('post.html', posts=data, form=form)
+                return render_template('post.html', posts=data, form=form, topicName=topicName)
     else:
         return redirect(url_for('login'))
 
@@ -237,23 +237,31 @@ def createcareer():
     elif current_user.role=='admin':
         form = createCareer()
         if form.validate_on_submit():
-            jobs = Career(comp_name=form.comp_name.data, job_name=form.job_name.data, job_date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),applyBy_date=form.applyBy_date.data,
+            if 'https://' not in form.apply_link.data:
+                form.apply_link.data = 'https://'+form.apply_link.data
+            jobs = Career(company=form.company.data, job_name=form.job_name.data, job_date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),applyBy_date=form.applyBy_date.data,
                          description=form.description.data, apply_link=form.apply_link.data)
             db.session.add(jobs)
             db.session.commit()
-            form.comp_name.data = ''
+            form.company.data = ''
             form.job_name.data = ''
             form.applyBy_date.data = ''
             form.description.data = ''
             form.apply_link.data = ''
+
         return render_template('create_career.html', form=form)
     else:
         abort(404)
 
 
-@app.route('/career')
+@app.route('/career', methods=['GET', 'POST'])
 def career():
       all = db.session.query(Career).all()
+      if current_user.role=='admin':
+          if request.method=='POST':
+              if request.form['del_job']:
+                  db.engine.execute('DELETE FROM job WHERE id={}'.format(request.form.get('del_job')))
+                  return redirect(url_for('career'))
       return render_template('view_career.html', job=all)
 
 
@@ -357,11 +365,11 @@ def change_password():
         return render_template('changePw.html', form=form)
     else:
         return redirect(url_for('login'))
-
+#saves uder uploaded media to /static
 @app.route('/media', methods=['GET', 'POST'])
 def media():
     form = mediaform()
-    images = db.engine.execute('SELECT url, likes, title FROM userfiles;')
+    images = db.engine.execute('SELECT * FROM userfiles;')
     if request.method == 'POST':
         if form.file.data:
             media = form.file.data
@@ -371,12 +379,17 @@ def media():
             else:
                 filename = secure_filename(media.filename)
                 media.save(os.path.join(app.config["IMAGE_PATH"], filename))
-                newmedia = userfiles(url=os.path.join(app.config["IMAGE_PATH"], filename), title=filename, likes=0)
+                newmedia = userfiles(title=filename, owner=current_user.username, date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
                 db.session.add(newmedia)
                 db.session.commit()
-
             return redirect(url_for('media'))
+        if request.form['action']=='del_image':
+            db.engine.execute('DELETE FROM userfiles WHERE id={};'.format(request.form.get('del_image')))
+            flash('Image deleted')
+            return redirect(url_for('media'))
+
     return render_template('media.html', form=form, images=images)
+
 
 
 @app.errorhandler(404)

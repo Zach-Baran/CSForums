@@ -12,6 +12,7 @@
 <button class="btn btn-primary">Upload</button> -->
   {{form.hidden_tag()}}
   <div class="custom-file">
+
     {{render_field(form.file)}}
 
 
@@ -24,8 +25,21 @@
 
   {% for image in images %}
 
-    <p>{{image.title}}</p>
-    <img src="{{url_for('static', filename=image.title)}}">
+    <div class="container" style="text-align:center;">
+      <img src="{{url_for('static', filename=image.title)}}" style="width:auto;height:auto;max-width:600px;max-height:500px;">
+      <div>Uploaded by: <a href="/profile/{{image.owner}}">{{image.owner}}</a> on {{image.date}}</div>
+      {% if (current_user.role=='admin' or current_user.username==image.owner) %}
+      <form action="" method="post" novalidate>
+        <button style="border-radius: 25px;border: #e6ffe6; background-color: lightgrey" name="del_image" value={{image.id}}>Delete</button>
+        <input type="hidden" name="action" value="del_image">
+      </form>
+
+      {% endif %}
+    </div>
+    <br>
+
+
+
   {% endfor %}
   {% with messages = get_flashed_messages() %}
     {% if messages %}

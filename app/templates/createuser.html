@@ -8,23 +8,28 @@
         <h2>Computer Science Club registration form</h2>
       <form action="" method="post" novalidate class="container">
         {{form.hidden_tag()}}
-        <p>
-          {{render_field(form.username)}}
-        </p>
-        <p>
-          {{render_field(form.firstname)}}
-        </p>
-        <p>
-          {{render_field(form.lastname)}}
-        </p>
-        <p>
-          {{render_field(form.email)}}
-        </p>
-        <p>
-          {{render_field(form.password)}}
-        </p>
+        <div>
 
-        <p>{{form.submit()}}</p>
+          {{render_field(form.username)}}
+        </div>
+        <div>
+
+          {{render_field(form.firstname)}}
+        </div>
+        <div>
+
+          {{render_field(form.lastname)}}
+        </div>
+        <div>
+
+          {{render_field(form.email)}}
+        </div>
+        <div>
+
+          {{render_field(form.password)}}
+        </div>
+
+        <div>{{form.submit()}}</div>
       </form>
 
         </div>

@@ -1,4 +1,4 @@
-from app import db
+from app import db, app
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask_login import UserMixin
 class User(db.Model, UserMixin):
@@ -19,7 +19,7 @@ class User(db.Model, UserMixin):
 
     @staticmethod
     def verify_token(token):
-        tokenSer = Serializer('fantasticfour')
+        tokenSer = Serializer(app.config['SECRET_KEY'])
         try:
             user_ID = tokenSer.loads(token)['userID']
         except:
@@ -83,7 +83,7 @@ class Events(db.Model):
 class Career(db.Model):
     __tablename__ = 'job'
     id = db.Column(db.Integer, primary_key=True)
-    comp_name = db.Column(db.String(64), unique=False, nullable=False)
+    company = db.Column(db.String(64), unique=False, nullable=False)
     job_name = db.Column(db.String(64), unique=False, nullable=False,)
     job_date = db.Column(db.DateTime, unique=False, nullable=False)
     applyBy_date = db.Column(db.String(64), unique=False, nullable=False)
@@ -115,9 +115,9 @@ class RegisterRequest(db.Model):
 
 class userfiles(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    url = db.Column(db.String(64), nullable=True)
-    title = db.Column(db.String(64), nullable=True)
-    likes = db.Column(db.Integer)
+    title = db.Column(db.String(64), nullable=False)
+    date = db.Column(db.DateTime, nullable=False)
+    owner = db.Column(db.String(32), nullable=False)
 
 
     def __repr__(self):
